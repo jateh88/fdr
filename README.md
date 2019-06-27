@@ -2,51 +2,100 @@
 
 ## What to Check For ##
 #### ID ####
+- column exists (WorkItemObject)
 - not empty (WorkItemObject)
 - sorts alphabetically (CascadeObject)
 #### Cascade Block ####
-- One and only one cell gets marked (WorkItemObject)
+- column exists (WorkItemObject)
+- one and only one cell gets marked (WorkItemObject)
 - no missing steps (CascadeObject)
-- All threads start w/ Procedure Step (CascadeObject)
-- Each thread terminates in 'F' or 'C' (CascadeObject)
-- All DO Solution levels get used (CascadeObject)
+- all threads start w/ Procedure Step (CascadeObject)
+- each thread terminates in 'F' or 'C' (CascadeObject)
+- all DO Solution levels get used (CascadeObject)
 #### Cascade Level ####
+- column exists (WorkItemObject)
 - not empty (WorkItemObject)
 - validated input list (WorkItemObject)
+- matches selection in Cascade Block (WorkItemObject)
 #### Requirement Statement ####
+- column exists (WorkItemObject)
 - Not empty (WorkItemObject)
 - #Child - valid pointer (CascadeObject)
 - #AdditionalParent - valid pointer (CascadeObject)
-- Check for ______ hashtags e.g. #Function, #MatingParts (WorkItemObject)
+- check for ______ hashtags e.g. #Function, #MatingParts (WorkItemObject)
+- report on extra tags found? (WorkItemObject)
 #### Requirement Rationale ####
+- column exists (WorkItemObject)
 - not empty (WorkItemObject)
 #### VorV Strategy ####
+- column exists (WorkItemObject)
 - not empty (WorkItemObject)
 #### VorV Results ####
+- column exists (WorkItemObject)
 - not empty (WorkItemObject)
 #### Devices ####
+- column exists (WorkItemObject)
 - not empty (WorkItemObject)
 #### DO Features... ####
+- column exists (WorkItemObject)
 - not empty (WorkItemObject)
 #### CTQ ####
+- column exists (WorkItemObject)
 - not empty (WorkItemObject)
 - validated input list (WorkItemObject)
 #### Other ####
 - 'N/A' check? (WorkItemObject)
+- color?
   
 ## Structure ##
 
+### main.py ###
+- instantiate Logger
+- instantiate ExcelDataHandler object
+  - future feature: allow user to input path
+  - future feature: use GOOEY or other GUI emulator to make it easier.
+- instantiate Cascade object
+- call Cascade validate method
+
+### ExcelDataHandler ###
+- very similar to Mentoring Matchmaker
+- object that stores the path, calls openpyxl
+INIT method
+- set READY to default (FALSE)
+- openpyxl: read excel sheet from data folder
+- report error if more than one is found
+- if worksheet exists:
+  - loop thru cells
+  - return list of dictionaries (row not needed; will be inferred from list position)
+- else: return False
+- if all checks out, set READY to True
+
+READY method
+- (checked by Cascade object before it does its calculating)
+
 ### Cascade Object ###
-- Container for Work Item objects
-- Calls all checks (even if the check is performed within the Work Item object)
-- Contains graph
+Descripton: 
+- container for Work Item objects
+- single public function that calls all checks (even if the check is performed within the Work Item object)
+- contains graph
   - as edge list?
   - should this be its own object? Depends on how I implement the parent/child checker
+INIT method
+- take list of dictionaries
+- for row in list:
+  - instantiate WorkItem object with row # and dictionary
+  - add WorkItem object to internal list (set? list?)
+VALIDATE method
+- Sequentially call all Cascade-level validations
+- for work_item in work_items:
+  - call WorkItem-level validations
 
 ### Work Item Objects ###
 - unique key = row #
 - contains dictionary of entire row
-
+Function:
+- init takes row #, dictionary
+  
 ## Notes ##
 - openpyxl - reads empty cells as None or ''?
 
