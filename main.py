@@ -1,6 +1,5 @@
 import pathlib
-import utilities as util
-
+from bin import excel_data_handler as util
 
 path = pathlib.Path(r"C:\Users\jchukina\JNJ\Roebling - FDR Gen 1 Concepts\Gen 1 Prototype Latest Files")
 path /= "20190618 Roebling FDR Gen 1 Prototype.xlsx"
@@ -18,6 +17,6 @@ for row in ws:
 for value in orig_number:
     p_value = util.get_first_integer_sequence(value)
     p_string = 'P' + util.convert_to_string_with_leading_zeroes(p_value, 3) + '-'
-
+h
 
     print(value, p_value, p_string)
