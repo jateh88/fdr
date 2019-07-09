@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/fdr.iml" filepath="$PROJECT_DIR$/.idea/fdr.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/fdr_validate.iml" filepath="$PROJECT_DIR$/.idea/fdr_validate.iml" />
     </modules>
   </component>
 </project>
