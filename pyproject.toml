@@ -3,13 +3,13 @@ requires = ["flit"]
 build-backend = "flit.buildapi"
 
 [tool.flit.metadata]
-module = "src" # Wwhere Flit looks for the source files
-dist-name = "fdr_validate" # Name of the application on PyPI
+module = "src_fdr" # Where Flit looks for the source files
+dist-name = "fdr" # Name of the application on PyPI
 author = "Jonathan Chukinas"
 author-email = "chukinas@gmail.com"
 home-page = "https://github.com/jonathanchukinas/fdr"
 classifiers = ["License :: OSI Approved :: MIT License"]
-#description-file = "README.md"
+description-file = "README.rst"
 #classifiers = [
 #    "License :: OSI Approved :: MIT License",
 #    "Programming Language :: Python :: 3",
@@ -18,4 +18,4 @@ classifiers = ["License :: OSI Approved :: MIT License"]
 #requires = ["feedparser", "html2text"]
 
 [tool.flit.scripts]
-fdr_validate = "src.apples:bananas"
+fdr = "src_fdr.cli:main"
