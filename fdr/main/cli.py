@@ -1,4 +1,4 @@
-from get_path_from_user import get_path_from_user
+from .get_path_from_user import get_path_from_user
 
 
 def main():

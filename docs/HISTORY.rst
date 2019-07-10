@@ -13,3 +13,7 @@ v 0.1.2
 v 0.1.3
 ------------------
 * implement tkinter
+
+v 0.1.3
+------------------
+* troubleshoot
