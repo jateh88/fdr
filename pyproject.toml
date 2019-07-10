@@ -15,7 +15,9 @@ description-file = "README.rst"
 #    "Programming Language :: Python :: 3",
 #    "Programming Language :: Python :: 3.7",
 #]
-#requires = ["feedparser", "html2text"]
+requires = [
+"click",
+ ]
 
 [tool.flit.scripts]
 fdr = "fdr.main.cli:main"

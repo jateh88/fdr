@@ -10,10 +10,10 @@ v 0.1.2
 ------------------
 * added README
 
-v 0.1.3
+v 0.1.3|4|5
 ------------------
 * implement tkinter
 
-v 0.1.3
+v 0.1.6
 ------------------
-* troubleshoot
+* implement click cli

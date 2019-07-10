@@ -1,11 +1,16 @@
 from .get_path_from_user import get_path_from_user
+from .. import __version__
+import click
 
 
-def main():
-    print('This is where I will ask you for an FDR Excel file and run a validation report on it.')
+@click.command()
+@click.option('--version', '-v', is_flag=True)
+def main(version):
+
+    if version:
+        string_ = 'version: ' + __version__
+        click.echo(string_)
+        return
+
     fdr_excel_path = get_path_from_user()
-    print(fdr_excel_path)
-
-
-if __name__ == '__main__':
-    main()
+    print("Here is the path to the file you selected:", fdr_excel_path)
