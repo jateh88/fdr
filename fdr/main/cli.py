@@ -1,6 +1,8 @@
 from .get_path_from_user import get_path_from_user
 from .. import __version__
+from .workbook import Workbook
 import click
+
 
 
 @click.command()
@@ -13,4 +15,8 @@ def main(version):
         return
 
     fdr_excel_path = get_path_from_user()
-    print("Here is the path to the file you selected:", fdr_excel_path)
+
+    workbook_ = Workbook()
+    workbook_.import_from_excel(fdr_excel_path)
+    workbook_.validate_fdr()
+    workbook_.validate_core()
