@@ -3,7 +3,7 @@ requires = ["flit"]
 build-backend = "flit.buildapi"
 
 [tool.flit.metadata]
-module = "src_fdr" # Where Flit looks for the source files
+module = "fdr" # Where Flit looks for the source files
 dist-name = "fdr" # Name of the application on PyPI
 author = "Jonathan Chukinas"
 author-email = "chukinas@gmail.com"
@@ -18,4 +18,4 @@ description-file = "README.rst"
 #requires = ["feedparser", "html2text"]
 
 [tool.flit.scripts]
-fdr = "src_fdr.cli:main"
+fdr = "fdr.cli:main"
