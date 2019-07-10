@@ -18,4 +18,4 @@ description-file = "README.rst"
 #requires = ["feedparser", "html2text"]
 
 [tool.flit.scripts]
-fdr = "fdr.cli:main"
+fdr = "fdr.main.cli:main"
