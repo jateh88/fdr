@@ -8,6 +8,10 @@ column it is intended for and the second is what it does. unless otherwise state
 #   1. Note how writing "TODO" in a comment line highlights the text.
 #      You can also view all the TODOs in a project or file. Just a useful FYI.
 #   2. Feel free to delete my comments as you work through them.
+# TODO - Jonahtan Notes - FYI: look into refactoring if you're not familiar with it already.
+#   It allows you to move or rename function/variables/etc without breaking the code that references it.
+#   This will
+
 
 # TODO Jonathan Notes - this would fit better in the sandbox at the bottom.
 # init a mock requirement (row on FDR) for testing
