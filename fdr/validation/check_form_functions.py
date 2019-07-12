@@ -1,8 +1,8 @@
 """
 This script serves as a library of functions for FDR checker. Each function has two comments before it, the first is which
-column it is intended for and the second is what it does. unless otherwise stated, each function returns a boolean true or false
+column it is intended for and the second states what it does. unless otherwise stated, each function returns a boolean true or false
 
-"""
+
 
 # init a mock requirement (row on FDR) for testing
 req1 = dict(iD="P20", procedureStep=" ", userNeed="X", cascadeLevel="DESIGN OUTPUT SOLUTION", requirementStatement= "Prepare Patient")
@@ -10,6 +10,8 @@ print("\n")
 print(req1)
 print("\n")
 
+
+"""
 # functions start here
 
 # Any
@@ -38,10 +40,25 @@ def is_hypen(value):
         return False
 
 # Any
+# check if value is yes
+def is_yes(value):
+    if value == "yes":
+        return True
+    else:
+        return False
+
+# Any
+# check if value is no
+def is_no(value):
+    if value == "no":
+        return True
+    else:
+        return False
+
+# Any
 # check if value contains 'not required' in its text
 def has_notrequired(value):
-    str1=value.lower()
-    if str1.find("not required") != -1:
+    if value.lower().find("not required") != -1:
         return True
     else:
         return False
@@ -57,8 +74,7 @@ def startswith_p(value):
 # ID
 # check if value has integers following the first letter (follows numbering scheme P010, P020, etc.)
 def has_digitsafterfirst(value):
-    str1=value[1:]
-    return str1.isdigit()
+    return value[1:].isdigit()
 
 # ID
 # check if value has 3 integers following the first character. First char is omitted
@@ -84,8 +100,7 @@ def has_sixdigits(value):
 # ID
 # check for hyphen within string
 def has_hyphen(value):
-    dash = value.find("-")
-    if dash != -1:
+    if value.find("-") != -1:
         return True
     else:
         return False
@@ -93,8 +108,7 @@ def has_hyphen(value):
 # ID
 # Check for dash in 4th position (P010-001)
 def has_hyphen_positioned(value):
-    dash = value.find("-")
-    if dash == 4:
+    if value.find("-") == 4:
         return True
     else:
         return False
@@ -179,18 +193,64 @@ def is_design_output(value):
     else:
         return False
 
-# V&V
-# check if windchill number is present
+# Cascade level
+# check if cascade level is one of the approved options.
+# returns true if it is procedure step, user need, risk need, business need, design input or design output
+def is_cascadelvl_approved(value):
+    if is_procedure(value) ^ is_user_need(value) ^ is_risk_need(value) \
+            ^ is_busi_need(value) ^ is_design_input(value) ^ is_design_output(value) == True:
+        return True
+    else:
+        return False
 
-# V&V
-# check if windchill number is accurate
+# V&V Results
+# check if W/C,wc or windchill is present. should indicate if windchill number is present
+def has_w_slash_c(value):
+    if value.lower().find("w/c") != -1:
+        return True
+    elif value.lower().find("wc") != -1:
+        return True
+    elif value.lower().find("windchill") != -1:
+        return True
+    else:
+        return False
+
+
+# V&V !!IN WORK!!
+# check if windchill number is a valid WC number by counting the digits. example W/C# 0000006634
+def is_windchill_valid(value):
+    # find index of 000. windchill numbers have at least three leading zeros.
+    index = value.find("000")
+    #slice the string starting at that index until the end of the string
+    value = value[index:]
+    #remove all spaces
+    value = value.replace(" ", "")
+
+    # test if rest of string is only digits. if all digits, count the number of digits and return true if there are 10
+    if (value.isdigit() == True) and (len(value)==10): #FIX! length doesnt have to be 10
+        return True
+    # If not all digits, slice the string after 10
+    value = value[9:]
+    # check if the rest of the string is letters only. this means WC# is correct. return true digits.
+    if value.isalpha()==True:
+        return True
+    #else... (alpha numeric or digits) return false.
+    else:
+        return False
+
+
+
+
+# Design Output Feature
+# check for any ctq IDs
+
 
 if __name__ == '__main__':
     #This is your playground
     #call function
     #print result
 
-    testval = "blah blah blah not required"
-    testout = hasNotReq(testval)
+    testval = "# 0000000000 blah blah blah"
+    testout = has_w_slash_c(testval)
     print(testout)
     pass
