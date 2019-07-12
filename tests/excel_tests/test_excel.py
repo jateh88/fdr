@@ -3,7 +3,6 @@ from pathlib import Path
 
 
 def test_integers_from_excel():
-
     path = Path(__file__).parent / "test.xlsx"
     wb = openpyxl.load_workbook(filename=path, read_only=True)
     ws = wb["integer"]
@@ -21,3 +20,21 @@ def test_integers_from_excel():
             assert isinstance(value, int)
         elif assert_type == "fail":
             assert not isinstance(value, int)
+
+
+def test_string_comparison_approach_from_excel():
+    path = Path(__file__).parent / "test.xlsx"
+    wb = openpyxl.load_workbook(filename=path, read_only=True)
+    ws = wb["strings"]
+    start_row = 1
+    end_row = ws.max_row
+    for row in range(start_row, end_row + 1):
+        assert_type = ws.cell(row, 1).value
+        cell_value = ws.cell(row, 2).value
+        if assert_type == "pass":
+            assert cell_value.replace(" ", "").lower().find("w/c") != -1
+        elif assert_type == "fail":
+            assert not cell_value.replace(" ", "").lower().find("w/c") != -1
+# Lessons learned: string comparison is effective as long as cell has some contents. If cell is empty (is None) it will
+# trigger an AttributeError if this type of string comparison is conducted because the object has no attribute replace,
+# lower or find.
