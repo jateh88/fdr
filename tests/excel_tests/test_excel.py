@@ -21,3 +21,5 @@ def test_integers_from_excel():
             assert isinstance(value, int)
         elif assert_type == "fail":
             assert not isinstance(value, int)
+        else:
+            raise ValueError("Assert Type must be 'pass' or 'fail'.")
