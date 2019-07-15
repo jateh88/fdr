@@ -22,6 +22,7 @@ def test_integers_from_excel():
             assert not isinstance(value, int)
         else:
             raise ValueError("Assert Type must be 'pass' or 'fail'.")
+# Lessons Learned: integers can be casted from excel document including formula calculated values using data_only flag
 
 
 def test_string_comparison_approach_from_excel():
@@ -40,6 +41,3 @@ def test_string_comparison_approach_from_excel():
 # Lessons learned: string comparison is effective as long as cell has some contents. If cell is empty (is None) it will
 # trigger an AttributeError if this type of string comparison is conducted because the object has no attribute replace,
 # lower or find.
-
-# TODO Jonathan note to Eric: I found out this weekend that you can read the values from excel formulas.
-#   I forget the key off the top of my head, but it's something like load_workbook(<path>, keep_values=True)

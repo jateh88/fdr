@@ -48,7 +48,7 @@ def is_hypen(value):
 def is_yes(value):
     # remove whitespace for direct string comparison. e.g. 'yes ' becomes 'yes'
     value = value.replace(" ", "")
-    if value == "yes":
+    if value.lower() == "yes":
         return True
     else:
         return False
@@ -59,7 +59,7 @@ def is_yes(value):
 def is_no(value):
     # remove whitespace for direct string comparison. e.g. 'no ' becomes 'no'
     value = value.replace(" ", "")
-    if value == "no":
+    if value.lower() == "no":
         return True
     else:
         return False
@@ -269,6 +269,7 @@ def is_design_output(value):
 # Cascade level
 # check if cascade level is one of the approved options.
 # returns true if it is procedure step, user need, risk need, business need, design input or design output
+# FDR rules: cascade level may only be one of the 6 defined types.
 def is_cascade_lvl_approved(value):
     if is_procedure_step(value) \
             ^ is_user_need(value) \
@@ -283,6 +284,7 @@ def is_cascade_lvl_approved(value):
 
 # V&V Results
 # check if W/C,wc or windchill is present. should indicate if windchill number is present
+# FDR rules: Design inputs and outputs may reference a document in windchill for its verification/validation results
 def has_w_slash_c(value):
     # convert input argument to all lower case for comparison
     val_lower = value.lower()
@@ -296,35 +298,54 @@ def has_w_slash_c(value):
         return False
 
 
-# V&V !!IN WORK!!
-# check if windchill number is a valid WC number by counting the digits. example W/C# 0000006634
-def is_windchill_valid(value):
-    # find index of 000. windchill numbers have at least three leading zeros.
-    lead_zeros_index = value.find("000")
-    # slice the string starting at that index until the end of the string
-    value = value[lead_zeros_index:]
+# V&V
+# check if 10 digit windchill number is present. example W/C# 0000006634
+def is_windchill_number_present(value):
     # remove all spaces
     value = value.replace(" ", "")
-
-    # test if rest of string is only digits. if all digits, count the number of digits and return true if there are 10
-    if (value.isdigit() is True) and (len(value) == 10):  # FIX! length doesnt have to be 10
+    # find index of 000. windchill numbers have at least three leading zeros.
+    leading_zeros_index = value.find("000")
+    # slice the string starting at that index until the end of the string
+    value = value[leading_zeros_index:]
+    # slice string again into two parts. first 10 characters (possible WC number) and remaining characters
+    wc_number = value[:9]
+    remaining_char = value[10:]
+    # test if wc_number is all digits and remaining is all letters
+    if wc_number.isdigit() and (remaining_char.isalpha() or len(remaining_char)==0) is True:
         return True
-    # If not all digits, slice the string after 10
-    value = value[9:]
-    # check if the rest of the string is letters only. this means WC# is correct. return true digits.
-    if value.isalpha() is True:
-        return True
-    # else... (alpha numeric or digits) return false.
     else:
         return False
 
 
 # Design Output Feature
-# check for any ctq IDs
+# check for CTQ IDs. returns true if "CTQ" is present in the cell
+# FDR rules: CTQ (critical to quality) features should be called out in the Design Output features column.
+# CTQs should be called out using the following format: (CTQ08)
+def has_ctq_id(value):
+    if value.lower().find("ctq") != -1:
+        return True
+    else:
+        return False
 
 
-# V&V
-# check if windchill number is present
+# Design Output Features !!IN WORK!!
+# check for CTQ number after CTQ tag. returns true if all occurrences of CTQ are followed by two digits
+# returns false if no CTQs are present OR they are not followed by two digits. (this should be used in conjunction
+# with the previous function that looks for CTQ in the cell)
+# FDR rules: CTQ (critical to quality) features should be called out in the Design Output features column.
+# CTQs should be called out using the following format: (CTQ08)
+def has_ctq_numbers(value):
+    #find index of first CTQ ID
+    ctq_index = value.lower().find("ctq")
+    #if there are none, return false
+    if ctq_index == -1:
+        return False
+    # while loop will keep searching for CTQ IDs until there are none. the string is sliced, checked for digits,
+    # searched for a new ID, index found for new CTQ ID, repeat.
+    while ctq_index != -1:
+        value = value[ctq_index:]
+
+
 
 """
 SANDBOX 
@@ -334,8 +355,8 @@ if __name__ == '__main__':
     # call function
     # print result
 
-    testval = "P010"
-    testout = has_w_slash_c(testval)
+    testval = " blah blah(CTQ08) blah W/C 000 blah blah blah"
+    testout = has_ctq_id(testval)
     print(testout)
     pass
 
