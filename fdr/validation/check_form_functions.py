@@ -9,6 +9,12 @@ boolean true or false
 # functions start here
 
 # Any
+# take value in and return it with no carriage returns (\n). This will make strings easier to evaluate
+def remove_carriage_returns(value):
+    value = value.replace("\n", "")
+    return value
+
+# Any
 # check if empty. returns True if empty
 def is_empty(value):
     if not value:
@@ -493,8 +499,8 @@ if __name__ == '__main__':
     # call function
     # print result
 
-    testval = "blah blah TBD anatomy (TBD percentile, etc.). Function #Parent = P40-030 #Parent = P40-040"
-    testout = parent_ids(testval)
+    testval = "blah blah TBD \n anatomy (TBD percentile, etc.). \nFunction #Parent = P40-030 #Parent = P40-040"
+    testout = remove_carriage_returns(testval)
     print(testout)
     pass
 
