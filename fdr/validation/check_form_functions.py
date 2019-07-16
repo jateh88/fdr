@@ -311,7 +311,7 @@ def is_windchill_number_present(value):
     wc_number = value[:9]
     remaining_char = value[10:]
     # test if wc_number is all digits and remaining is all letters
-    if wc_number.isdigit() and (remaining_char.isalpha() or len(remaining_char)==0) is True:
+    if wc_number.isdigit() and (remaining_char.isalpha() or len(remaining_char) == 0) is True:
         return True
     else:
         return False
@@ -328,23 +328,161 @@ def has_ctq_id(value):
         return False
 
 
-# Design Output Features !!IN WORK!!
+# Design Output Features
 # check for CTQ number after CTQ tag. returns true if all occurrences of CTQ are followed by two digits
 # returns false if no CTQs are present OR they are not followed by two digits. (this should be used in conjunction
-# with the previous function that looks for CTQ in the cell)
+# with the previous function that looks for CTQ in the cell to eliminate possibility of the former case)
 # FDR rules: CTQ (critical to quality) features should be called out in the Design Output features column.
 # CTQs should be called out using the following format: (CTQ08)
 def has_ctq_numbers(value):
-    #find index of first CTQ ID
+    ctq_count = 0
+    number_count = 0
+    # find index of first CTQ ID
     ctq_index = value.lower().find("ctq")
-    #if there are none, return false
-    if ctq_index == -1:
-        return False
     # while loop will keep searching for CTQ IDs until there are none. the string is sliced, checked for digits,
     # searched for a new ID, index found for new CTQ ID, repeat.
     while ctq_index != -1:
-        value = value[ctq_index:]
+        # add 1 to ctq_counter, if there were no CTQs, the while condition would not be met.
+        ctq_count += 1
+        # slice value from after "ctq"
+        value = value[ctq_index + 3:]
+        # if the next two characters are numbers (they should be if formatted correctly)
+        if value[0:2].isdigit() is True:
+            # add 1 to number counter. this counter will be compared to ctq_count later. they should match
+            number_count += 1
+        # search for next CTQ. if there are not, find() will output a -1 and while loop will end
+        ctq_index = value.lower().find("ctq")
+    # if "ctq" and number count match AND they aren't zero...they are formatted correctly.
+    if (ctq_count == number_count) and ctq_count > 0:
+        return True
+    else:
+        return False
 
+
+# Requirement Statement
+# checks for hash (#) symbol in string
+# FDR rules: hastags are used to identify parent/child relationships,
+# functional requirements, mating part requirements, user interface requirements and mechanical properties
+def has_hash(value):
+    if value.find("#") != -1:
+        return True
+    else:
+        return False
+
+
+# Requirement Statement
+# checks for #Function in cell.
+# FDR rules: The requirement statement can be tagged using #Function to identify a functional requirement
+def has_hash_function(value):
+    if value.find("#Function") != -1:
+        return True
+    else:
+        return False
+
+
+# Requirement Statement
+# checks for #MatingParts
+# FDR rules: The requirement statement can be tagged using #MatingParts to identify a requirement pertaining to proper
+# fitting between components
+def has_hash_mating_parts(value):
+    if value.find("#MatingParts") != -1:
+        return True
+    else:
+        return False
+
+
+# Requirement Statement
+# checks for #MechProperties
+# FDr rules: The requirement statement can be tagged using #MechProperties to identify a requirement that pertains to
+# the mechanical properties of the implant/instrument
+def has_hash_mech_properties(value):
+    if value.find("#MechProperties") != -1:
+        return True
+    else:
+        return False
+
+
+# Requirement Statement
+# checks for #UserInterface
+# FDR rules: the requirement statement can be tagged using #UserInterface to identify a requirement that relates to how
+# the user handles the implant/instrument
+def has_hash_user_interface(value):
+    if value.find("#UserInterface") != -1:
+        return True
+    else:
+        return False
+
+
+# TODO will #Parent or #AdditionalParent be used in requirement statement? sticking with #Parent for now
+# Requirement Statement
+# checks for #Child returns true if #Child is present
+# FDR rules: #Child and #Parent are used to link a Design Input that leads to a Design Output Solution that has
+# been documented earlier in the form. The Design Input is tagged using #Child = P###-### where the ID refers to the
+# Output solution and the Output solution is tagged using #Parent = P###-### where the ID refers to the Design Input
+def has_hash_child(value):
+    if value.find("#Child") != -1:
+        return True
+    else:
+        return False
+
+
+# Requirement Statement
+# checks for #Parent returns true if #Parent is present
+# FDR rules: #Child and #Parent are used to link a Design Input that leads to a Design Output Solution that has
+# been documented earlier in the form. The Design Input is tagged using #Child = P###-### where the ID refers to the
+# Output solution and the Output solution is tagged using #Parent = P###-### where the ID refers to the Design Input
+def has_hash_parent(value):
+    if value.find("#Parent") != -1:
+        return True
+    else:
+        return False
+
+
+# Requirement Statement
+# returns IDs (P###-###) that are tagged using #Child as a list. assumes there are #Child present.
+# FDR rules: #Child and #Parent are used to link a Design Input that leads to a Design Output Solution that has
+# been documented earlier in the form. The Design Input is tagged using #Child = P###-### where the ID refers to the
+# Output solution and the Output solution is tagged using #Parent = P###-### where the ID refers to the Design Input
+def child_ids(value):
+    # init output list. will append with values later
+    ids_output_list = []
+    # remove spaces for easier evaluation
+    value = value.replace(" ", "")
+    # while there are #child in string. string will be sliced after each ID is retrieved
+    while value.find("#Child") != -1:
+        # find the index of the child hashtag
+        hash_index = value.find("#Child")
+        value = value[hash_index:]
+        # find the beginning of the ID by searching for P
+        id_start_index = value.find("P")
+        # append output list with ID
+        ids_output_list.append(value[id_start_index:id_start_index + 7])
+        value = value[id_start_index:]
+    return ids_output_list
+
+
+# Requirement Statement
+# returns IDs (P###-###) that are tagged using #Parent as a list. assumes there are #Parent present.
+# FDR rules: #Child and #Parent are used to link a Design Input that leads to a Design Output Solution that has
+# been documented earlier in the form. The Design Input is tagged using #Child = P###-### where the ID refers to the
+# Output solution and the Output solution is tagged using #Parent = P###-### where the ID refers to the Design Input
+def parent_ids(value):
+    # init output list. will append with values later
+    ids_output_list = []
+    # remove spaces for easier evaluation
+    value = value.replace(" ", "")
+    # while there are #child in string. string will be sliced after each ID is retrieved
+    while value.find("#Parent") != -1:
+        # find the index of the child hashtag
+        hash_index = value.find("#Parent")
+        # slice value from the hash_index + 2 (to account for capital P at the beginning of Parent) to the end
+        value = value[hash_index+2:]
+        # find the beginning of the ID by searching for P
+        id_start_index = value.find("P")
+        # append output list with ID
+        ids_output_list.append(value[id_start_index:id_start_index + 7])
+        value = value[id_start_index:]
+    return ids_output_list
 
 
 """
@@ -355,8 +493,8 @@ if __name__ == '__main__':
     # call function
     # print result
 
-    testval = " blah blah(CTQ08) blah W/C 000 blah blah blah"
-    testout = has_ctq_id(testval)
+    testval = "blah blah TBD anatomy (TBD percentile, etc.). Function #Parent = P40-030 #Parent = P40-040"
+    testout = parent_ids(testval)
     print(testout)
     pass
 
