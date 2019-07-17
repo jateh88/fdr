@@ -14,3 +14,8 @@ class Field:
     def validate(cls):
         # This remains empty. The child classes will polymorph this into their own
         pass
+
+    @classmethod
+    def __not_empty(cls):
+        # loop thru value_seq and check to make sure they're strings not equal to ''
+        pass
