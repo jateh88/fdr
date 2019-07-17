@@ -61,31 +61,4 @@ def convert_to_string_with_leading_zeroes(value, min_length=0):
         return output
 
 
-def get_dicts_from_excel(path):
-    """Return a dictionary. Keys = worksheet names; Values = worksheet contents
-    Those Values are themselves lists of dictionaries. Each list item is a worksheet row.
-    Each worksheet row is a dictionary. Keys = column names; Values = cell values
 
-    :param path: Should be a pathlib.Path() object
-
-    """
-
-    wb = openpyxl.load_workbook(path)
-    workbook_contents = dict()
-
-    for worksheet_name in wb.sheetnames:
-        ws = wb[worksheet_name]
-        worksheet_contents = []
-        # Convert each row to a dictionary, using the column headers as keys
-        for row in range(2, ws.max_row + 1):
-            row_contents = dict()
-            for col in range(1, ws.max_column + 1):
-                key = ws.cell(1, col).value
-                value = ws.cell(row, col).value
-                row_contents[key] = value
-            worksheet_contents.append(row_contents)
-        workbook_contents[worksheet_name] = worksheet_contents
-
-    return workbook_contents
-
-def get_boolean
