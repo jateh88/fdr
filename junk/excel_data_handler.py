@@ -89,15 +89,3 @@ def get_dicts_from_excel(path):
     return workbook_contents
 
 def get_boolean
-
-
-if __name__ == '__main__':
-    string = 'P110'
-    print(get_first_integer_sequence(string))
-
-    print(convert_to_string_with_leading_zeroes(43311, 3))
-
-    path = pathlib.Path(r"C:\Users\jchukina\JNJ\Roebling - FDR Gen 1 Concepts\Gen 1 Prototype Latest Files")
-    path = path / "20190618 Roebling FDR Gen 1 Prototype.xlsx"
-    print(f'workbook path: {path}')
-    print(get_dicts_from_excel(path))

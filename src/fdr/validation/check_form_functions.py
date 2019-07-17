@@ -155,6 +155,8 @@ def has_hyphen_positioned(value):
 # Cascade Block
 # check for capital X
 # FDR rules: only a capital X or capital F are allowed in the cascade visualizer columns. (B-G in its current form)
+# TODO Question: "has" implies there are allowed to be other chars in the string as well.
+# TODO I forget how, but there's a better way of removing that whitespace. Strip, maybe?
 def has_capital_x(value):
     # remove whitespace for direct string comparison. e.g. ' X ' becomes 'X'
     value = value.replace(" ", "")
@@ -437,6 +439,9 @@ def has_hash_child(value):
 # FDR rules: #Child and #Parent are used to link a Design Input that leads to a Design Output Solution that has
 # been documented earlier in the form. The Design Input is tagged using #Child = P###-### where the ID refers to the
 # Output solution and the Output solution is tagged using #Parent = P###-### where the ID refers to the Design Input
+# TODO let's not use the word "hash" here. It has a very specific meaning in computer science which can cause
+#   confusion. In fact, you've probably already heard/seen it mentioned in the git literature. It's synonymous with
+#   "checksum". It's how Python dictionaries work too.
 def has_hash_parent(value):
     if value.find("#Parent") != -1:
         return True
