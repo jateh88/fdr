@@ -8,3 +8,4 @@ def get_new_path_from_dialog():
     root.withdraw()
     file_path = Path(filedialog.askopenfilename())
     return file_path
+

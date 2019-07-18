@@ -1,28 +1,64 @@
+class NotExist:
+    pass
+
+
 class Field:
-
     __value_seq = None  # This will ultimately be a tuple containing the cell values
-    __column_number_seq = None
     __header_name_seq = None
+    __header_name = None
+    __in_position = None
+    __column_count_should = None
 
-    def __init__(self, row_number):
-        self.row_number = row_number
+    def __init__(self, ws_column_seq):
+        # TODO do a type check (sequence of WorksheetColumn objects)
 
-    @classmethod
-    def get_column_number_seq(cls, header_seq):
-        """The returned column numbers determine which cell data will be passed to this object later."""
-        # Return None if column not found? Or -1? Or False?
-        pass
-
-    @classmethod
-    def validate_column_position(cls, previous_column_number):
-        # TODO: write this method
-        col_num = 42
-        return col_num
+        header_name_seq = tuple(column.header for column in ws_column_seq)
+        col_values_seq = tuple(column.values for column in ws_column_seq)
+        self.__index_seq = self.find_indices(header_name_seq)
+        self.__value_seq = self.set_values(col_values_seq, self.__index_seq)
 
     @classmethod
-    def set_values(cls, values_seq):
+    def find_indices(cls, header_name_seq):
+        index_seq = []
+        # TODO check for the existance of field name first.
+        for index, header in enumerate(header_name_seq):
+            if header in cls.__header_name_seq:
+                index_seq.append(index)
+        if len(index_seq) >= 1:
+            return index_seq
+        else:
+            return NotExist()
+
+    @property
+    def indices(self):
+        return self.__index_seq
+
+    @staticmethod
+    def set_values(column_values_seq, index_seq):
         # TODO check that input is a sequence that can be converted to tuple.
-        cls.__values_seq = values_seq
+        value_seq = []
+        for index in index_seq:
+            column_values = column_values_seq[index]
+            value_seq.append(column_values)
+        return value_seq
+
+    @classmethod
+    def validate_column_position(cls, previous_column_num):
+        """Check that this field comes after the previous one. Return this column number."""
+        if isinstance(cls.__column_num_seq, NotExist):
+            # This field doesn't exist in excel sheet
+            return None
+        first_column_num = cls.__column_num_seq[0]
+        last_column_num = cls.__column_num_seq[-1]
+        if previous_column_num < first_column_num:
+            cls.__in_position = True
+        else:
+            cls.__in_position = False
+        return last_column_num
+
+    @classmethod
+    def validate_column_count(cls):
+        pass
 
     @classmethod
     def validate(cls):

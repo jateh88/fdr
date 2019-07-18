@@ -5,4 +5,8 @@
 :: It shouldn't throw any errors if I've done it right...
 
 python -m pip uninstall fdr
+python setup.py sdist bdist_wheel
 python -m pip install -e %HOMEPATH%\projects\fdr
+python
+import fdr
+import fdr.fields as f
