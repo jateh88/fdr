@@ -2,6 +2,7 @@ from .field import Field
 from .id import ID
 from .devices import Devices
 
+# The ordering for the excel fields will be evaluated according to the order given here.
 field_class_seq = [
     ID,
     Devices,

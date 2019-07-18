@@ -2,10 +2,11 @@
 import openpyxl
 import click
 # from .fields import field_class_seq
-from fdr.fields import field_class_seq
+from fdr.fields import field_class_seq as field_classes
 from collections import namedtuple
 
 WorksheetColumn = namedtuple("WorksheetColumn", "header values")
+# TODO: refactor 'values' field to 'body'
 
 
 class FdrWorksheet:
@@ -13,21 +14,32 @@ class FdrWorksheet:
     def __init__(self, path):
         self.path = path  # TODO add check for path string ending in '.xlsx' or '.xls'
         self.worksheet_name = "Procedure Based Requirements"
-        ws_column_seq = self._import_worksheet(path, self.worksheet_name)
-        # self.field_seq = self._set_fields(ws_column_seq)
+        worksheet = self._get_worksheet(path, self.worksheet_name)
+        self._fields = self._initialize_fields(field_classes, worksheet)
 
     @staticmethod
-    def _import_worksheet(path, worksheet_name):
-        """Return list of WorksheetColumn namedtuples"""
+    def _get_worksheet(path, worksheet_name):
+        """Return list of WorksheetColumn objects"""
         # TODO add a check to see if this is a valid path.
         #   Add a try
         # try:
-        wb = openpyxl.load_workbook(path)
+        wb = openpyxl.load_workbook(
+            filename=path,
+            read_only=True,
+            data_only=True,
+        )
         # except:
             # raise ValueError(f"{worksheet_name} worksheet not found.")
         # TODO replace valueerror with custom validation error
         # TODO: add extra functionality. If exact worksheet name is not found,
         #   use the most similar one and inform user of this.
+        worksheet_names = [name.lower() for name in wb.sheetnames]
+
+        try:
+            worksheet_index = worksheet_names.index(worksheet_name.lower())
+        except ValueError:
+            raise ValueError(f"Excel Sheet must contain a '{worksheet_name}' worksheet")
+        worksheet_name = wb.sheetnames[worksheet_index]
         ws = wb[worksheet_name]
         ws_data = []
         start_column_num = 1
@@ -41,18 +53,19 @@ class FdrWorksheet:
         return ws_data
 
     @staticmethod
-    def _set_fields(ws_column_seq):
+    def _initialize_fields(field_classes, worksheet):
+        """Get list of field objects that each contain their portion of the worksheet"""
+        return [Field(worksheet) for Field in field_classes]
+
+    def validate(self):
+        """Validate each field (e.g. 'ID', 'Devices')"""
+
+        for field in self._fields:
+            field.validate()
 
 
-        column_num_cur = 0
-        field_seq = [Field() for Field in field_class_seq]
-        for field in field_seq:
-            field.find_indices(header_name_seq)
-            field.validate_column_count()  # TODO this shouldn't be called yet. First, initialize (import), then val.
-            column_num_cur = field.validate_column_position(column_num_cur)
-            field.set_values(col_values_seq)
-        return field_seq
+    # --- PROPERTIES ----------------------------------------------------------
 
-    @staticmethod
-    def validate():
-        click.echo("Validating...")
+    @property
+    def fields(self):
+        return self._fields

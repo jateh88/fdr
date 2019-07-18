@@ -4,7 +4,7 @@ import click
 
 class ID(Field):
 
-    __header_name_seq = ['ID']
+    _header_names = ['id']
 
     def validate(self):
         # - column exists
@@ -12,8 +12,7 @@ class ID(Field):
         # - cells in alphabetical order
         index = 99
         row = self._get_row(index)
-
-        pass
+        click.echo("Validating ID Field!")
 
     def starts_with_p(self):
         pass

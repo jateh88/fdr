@@ -1,51 +1,64 @@
-class NotExist:
+import click
+
+class FieldNotFound:
+    # def __iter__(self):
+    #     return
     pass
 
 
+
 class Field:
-    __value_seq = None  # This will ultimately be a tuple containing the cell values
-    __header_name_seq = None
-    __header_name = None
-    __in_position = None
-    __column_count_should = None
+    _header_names = None
+
+    # --- INITIALIZE ----------------------------------------------------------
 
     def __init__(self, ws_column_seq):
         # TODO do a type check (sequence of WorksheetColumn objects)
 
-        header_name_seq = tuple(column.header for column in ws_column_seq)
-        col_values_seq = tuple(column.values for column in ws_column_seq)
-        self.__index_seq = self.find_indices(header_name_seq)
-        self.__value_seq = self.set_values(col_values_seq, self.__index_seq)
+        worksheet_headers = tuple(column.header for column in ws_column_seq)
+        worksheet_body = tuple(column.values for column in ws_column_seq)
+
+        matching_indices = self.get_matching_indices(worksheet_headers)
+        # if not isinstance(matching_indices, NotExist):
+        matching_columns = self._get_matching_columns(worksheet_body, matching_indices)
+
+        self._indices = matching_indices
+        self._columns = matching_columns
 
     @classmethod
-    def find_indices(cls, header_name_seq):
-        index_seq = []
-        # TODO check for the existance of field name first.
-        for index, header in enumerate(header_name_seq):
-            if header in cls.__header_name_seq:
-                index_seq.append(index)
-        if len(index_seq) >= 1:
-            return index_seq
-        else:
-            return NotExist()
+    def get_matching_indices(cls, worksheet_headers):
+        worksheet_headers = [header.lower() for header in worksheet_headers]
+        sought_headers = [header.lower() for header in cls._header_names]
 
-    @property
-    def indices(self):
-        return self.__index_seq
+        matching_columns_indices = []
+        # TODO check for the existance of field name first.
+        field_found = False
+        for index, header in enumerate(worksheet_headers):
+            if header in sought_headers:
+                matching_columns_indices.append(index)
+                field_found = True
+        if field_found:
+            return matching_columns_indices
+        else:
+            return FieldNotFound()
 
     @staticmethod
-    def set_values(column_values_seq, index_seq):
+    def _get_matching_columns(worksheet_body, indices):
         # TODO check that input is a sequence that can be converted to tuple.
-        value_seq = []
-        for index in index_seq:
-            column_values = column_values_seq[index]
-            value_seq.append(column_values)
-        return value_seq
+        if isinstance(indices, FieldNotFound):
+            return FieldNotFound()
+        matching_columns = [worksheet_body[index] for index in indices]
+        return matching_columns
+
+    # --- VALIDATE ------------------------------------------------------------
+
+    def validate(self):
+        click.echo("Validating ___ Field!")
 
     @classmethod
     def validate_column_position(cls, previous_column_num):
         """Check that this field comes after the previous one. Return this column number."""
-        if isinstance(cls.__column_num_seq, NotExist):
+        if isinstance(cls.__column_num_seq, FieldNotFound):
             # This field doesn't exist in excel sheet
             return None
         first_column_num = cls.__column_num_seq[0]
@@ -56,19 +69,19 @@ class Field:
             cls.__in_position = False
         return last_column_num
 
-    @classmethod
-    def validate_column_count(cls):
+    def validate_field_exists(self):
         pass
 
-    @classmethod
-    def validate(cls):
-        # This remains empty. The child classes will polymorph this into their own
-        pass
+    # --- PROPERTIES ----------------------------------------------------------
 
     @classmethod
-    def __not_empty(cls):
-        # loop thru value_seq and check to make sure they're strings not equal to ''
-        pass
+    def get_names(cls):
+        return cls._header_names
+
+    def get_indices(self):
+        return self._indices
+
+    # --- STATIC METHODS ------------------------------------------------------
 
     @staticmethod
     def _get_row(index):
