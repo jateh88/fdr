@@ -5,6 +5,17 @@ import click
 class ID(Field):
     _header_names = ['id']
 
+    # Define validation functions (for demonstration, checking that the value starts with P will be the only one)
+    # Targeted column: ID
+    # What it does: checks that value has a capital P as the first character.
+    # FDR rules: recommended ID formatting for procedure steps and procedure based requirements follow a naming
+    # convention. e.g. P010, P020, etc. for procedure steps and P010-020 for procedure based requirements
+    def starts_with_p(value):
+        if value.startswith("P"):
+            return True
+        else:
+            return False
+
     def validate(self):
         # Currently, validate() will only check if a value starts with P and will print a descriptive message when
         # called. the input argument defined is a list of IDs that was previously extracted from the FDR.
@@ -32,13 +43,4 @@ class ID(Field):
         # - cells not empty
         # - cells in alphabetical order
 
-    # Define validation functions (for demonstration, checking that the value starts with P will be the only one)
-    # Targeted column: ID
-    # What it does: checks that value has a capital P as the first character.
-    # FDR rules: recommended ID formatting for procedure steps and procedure based requirements follow a naming
-    # convention. e.g. P010, P020, etc. for procedure steps and P010-020 for procedure based requirements
-    def starts_with_p(value):
-        if value.startswith("P"):
-            return True
-        else:
-            return False
+
