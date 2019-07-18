@@ -42,8 +42,6 @@ J&J Quick Start
     #. Note: You might see a note about ``pip`` being out of date. This is ok, but feel free to update it as suggested.
 #. **Run** ``fdr``
     a. In Command Prompt, type ``fdr``
-    #. Note: Currently, ``fdr`` is just a barebones script meant to test the distribution strategy. If you've gotten this far, that strategy has been a success!
-
 
 
 
