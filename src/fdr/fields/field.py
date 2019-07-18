@@ -69,3 +69,8 @@ class Field:
     def __not_empty(cls):
         # loop thru value_seq and check to make sure they're strings not equal to ''
         pass
+
+    @staticmethod
+    def _get_row(index):
+        starting_row = 2
+        return index + starting_row
