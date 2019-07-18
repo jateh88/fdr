@@ -29,7 +29,7 @@ class ID(Field):
         # Init. an empty list that will contain the spreadsheet rows where discrepancies are found
 
         click.echo("Validating ID Field!")
-
+        temp_comment_out = """
         error_indeces = []
         # for indeces (location of errors) and ids (value in cell) in self (input argument) enumerate list starting
         # with 1. This will offset indeces so it can be used to directly reference excel sheet (row#)
@@ -50,6 +50,4 @@ class ID(Field):
         # - column exists
         # - cells not empty
         # - cells in alphabetical order
-
-    def starts_with_p(self):
-        pass
+        """

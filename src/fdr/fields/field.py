@@ -53,7 +53,7 @@ class Field:
     # --- VALIDATE ------------------------------------------------------------
 
     def validate(self):
-        click.echo("Validating ___ Field!")
+        click.echo("Validating __ Field!")
 
     @classmethod
     def validate_column_position(cls, previous_column_num):
