@@ -4,6 +4,8 @@ import click
 # from .fields import field_class_seq
 from fdr.fields import field_class_seq as field_classes
 from collections import namedtuple
+from pathlib import Path
+from openpyxl.utils.exceptions import InvalidFileException
 
 WorksheetColumn = namedtuple("WorksheetColumn", "header values")
 # TODO: refactor 'values' field to 'body'
@@ -12,24 +14,32 @@ WorksheetColumn = namedtuple("WorksheetColumn", "header values")
 class FdrWorksheet:
 
     def __init__(self, path):
-        self.path = path  # TODO add check for path string ending in '.xlsx' or '.xls'
+        self._import_successful = False
+        self.path = path
         self.worksheet_name = "Procedure Based Requirements"
-        worksheet = self._get_worksheet(path, self.worksheet_name)
-        self._fields = self._initialize_fields(field_classes, worksheet)
+        try:
+            if path == '.':
+                raise ValueError
+            worksheet = self._get_worksheet(path, self.worksheet_name)
+            self._fields = self._initialize_fields(field_classes, worksheet)
+            self._import_successful = True
+        except ValueError:
+            click.echo("Error: No file selected")
+        except InvalidFileException as e:
+            click.echo(e)
+
 
     @staticmethod
     def _get_worksheet(path, worksheet_name):
         """Return list of WorksheetColumn objects"""
         # TODO add a check to see if this is a valid path.
         #   Add a try
-        # try:
         wb = openpyxl.load_workbook(
             filename=path,
             read_only=True,
             data_only=True,
         )
-        # except:
-            # raise ValueError(f"{worksheet_name} worksheet not found.")
+        # raise ValueError(f"{worksheet_name} worksheet not found.")
         # TODO replace valueerror with custom validation error
         # TODO: add extra functionality. If exact worksheet name is not found,
         #   use the most similar one and inform user of this.
@@ -59,10 +69,11 @@ class FdrWorksheet:
 
     def validate(self):
         """Validate each field (e.g. 'ID', 'Devices')"""
-
-        for field in self._fields:
-            field.validate()
-
+        if self._import_successful:
+            for field in self._fields:
+                field.validate()
+        else:
+            click.echo("Import was unsuccessful, so there wasn't anything to validate.")
 
     # --- PROPERTIES ----------------------------------------------------------
 
