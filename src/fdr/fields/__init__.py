@@ -1,13 +1,13 @@
+from .field import Field
 from .id import ID
 from .devices import Devices
 
-field_seq = [
+field_class_seq = [
     ID,
     Devices,
 ]
 
-# TODO pseudocode for validated excel content:
-"""
+pseudocode = """
 User types 'fdr' into command prompt
     (Later, there will be other options. For now, this is what's planned)
 Get path

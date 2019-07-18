@@ -4,27 +4,43 @@ class NotExist:
 
 class Field:
     __value_seq = None  # This will ultimately be a tuple containing the cell values
-    __column_num_seq = None
     __header_name_seq = None
     __header_name = None
     __in_position = None
     __column_count_should = None
 
-    def __init__(self, row_number):
-        self.row_number = row_number
+    def __init__(self, ws_column_seq):
+        # TODO do a type check (sequence of WorksheetColumn objects)
 
-    # --- HEADERS AND COLUMNS -------------------------------------------------
+        header_name_seq = tuple(column.header for column in ws_column_seq)
+        col_values_seq = tuple(column.values for column in ws_column_seq)
+        self.__index_seq = self.find_indices(header_name_seq)
+        self.__value_seq = self.set_values(col_values_seq, self.__index_seq)
 
     @classmethod
-    def find_column(cls, header_seq, start_column_num):
-        column_num_seq = []
-        for column_num, header in enumerate(header_seq, start_column_num):
-            if cls.__header_name == header:
-                column_num_seq.append(column_num)
-        if len(column_num_seq):
-            cls.__column_num_seq = column_num_seq
+    def find_indices(cls, header_name_seq):
+        index_seq = []
+        # TODO check for the existance of field name first.
+        for index, header in enumerate(header_name_seq):
+            if header in cls.__header_name_seq:
+                index_seq.append(index)
+        if len(index_seq) >= 1:
+            return index_seq
         else:
-            cls.__column_num_seq = NotExist()
+            return NotExist()
+
+    @property
+    def indices(self):
+        return self.__index_seq
+
+    @staticmethod
+    def set_values(column_values_seq, index_seq):
+        # TODO check that input is a sequence that can be converted to tuple.
+        value_seq = []
+        for index in index_seq:
+            column_values = column_values_seq[index]
+            value_seq.append(column_values)
+        return value_seq
 
     @classmethod
     def validate_column_position(cls, previous_column_num):
@@ -42,15 +58,7 @@ class Field:
 
     @classmethod
     def validate_column_count(cls):
-
         pass
-
-    # --- VALUES --------------------------------------------------------------
-
-    @classmethod
-    def set_values(cls, values_seq):
-        # TODO check that input is a sequence that can be converted to tuple.
-        cls.__values_seq = values_seq
 
     @classmethod
     def validate(cls):
