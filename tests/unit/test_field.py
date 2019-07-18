@@ -1,27 +1,16 @@
-from fdr import WorksheetColumn
-from fdr import FdrWorksheet
+from fdr import WorksheetColumn, FdrWorksheet
 from pathlib import Path
+# import openpyxl
 
 
 def test_import_worksheet():
-    path = str(Path('fdr_simple.xlsx').resolve())
+    path = Path(__file__).parent / 'fdr_simple.xlsx'
     ws_name = 'import_worksheet'
     ws_data = FdrWorksheet._import_worksheet(path, ws_name)
     for col in ws_data:
         assert isinstance(col, WorksheetColumn)
+    # wb = openpyxl.load_workbook(path)
+    # print(f"worksheet names: {wb.sheetnames}")
 
-
-# def test_field_id():
-#
-#
-#
-#     # --- Define worksheet columns --------------------------------------------
-#     ws_col_seq = [
-#         WorksheetColumn(header="id", values=tuple(range(100))),
-#         WorksheetColumn(header="device", values=tuple(range(100))),
-#     ]
-#
-#     id_field = ID(ws_col_seq)
-#     assert id_field.indices == [0]
-
-test_import_worksheet()
+# if __name__ == "__main__":
+#     test_import_worksheet()
