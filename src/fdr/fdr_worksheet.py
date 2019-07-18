@@ -1,6 +1,8 @@
 # This is a list of classes, each containing the logic for a worksheet field (or grouping of fields):
-from .fields import field_class_seq
 import openpyxl
+import click
+# from .fields import field_class_seq
+from fdr.fields import field_class_seq
 from collections import namedtuple
 
 WorksheetColumn = namedtuple("WorksheetColumn", "header values")
@@ -11,18 +13,18 @@ class FdrWorksheet:
     def __init__(self, path):
         self.path = path  # TODO add check for path string ending in '.xlsx' or '.xls'
         self.worksheet_name = "Procedure Based Requirements"
-        ws_column_seq = self.get_worksheet_columns(path, self.worksheet_name)
-        # self.field_seq = self.import_columns(ws_column_seq)
+        ws_column_seq = self._import_worksheet(path, self.worksheet_name)
+        # self.field_seq = self._set_fields(ws_column_seq)
 
     @staticmethod
-    def get_worksheet_columns(path, worksheet_name):
+    def _import_worksheet(path, worksheet_name):
         """Return list of WorksheetColumn namedtuples"""
         # TODO add a check to see if this is a valid path.
         #   Add a try
-        try:
-            wb = openpyxl.load_workbook(path)
-        except:
-            raise ValueError(f"'{worksheet_name} worksheet not found.")
+        # try:
+        wb = openpyxl.load_workbook(path)
+        # except:
+            # raise ValueError(f"{worksheet_name} worksheet not found.")
         # TODO replace valueerror with custom validation error
         # TODO: add extra functionality. If exact worksheet name is not found,
         #   use the most similar one and inform user of this.
@@ -39,7 +41,7 @@ class FdrWorksheet:
         return ws_data
 
     @staticmethod
-    def import_columns(ws_column_seq):
+    def _set_fields(ws_column_seq):
 
 
         column_num_cur = 0
@@ -51,5 +53,6 @@ class FdrWorksheet:
             field.set_values(col_values_seq)
         return field_seq
 
-    def validate(self):
+    @staticmethod
+    def validate():
         click.echo("Validating...")
