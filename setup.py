@@ -7,7 +7,7 @@ setuptools.setup(
     name="fdr",
     description="Validate Functional & Design Requirements.",
     long_description=long_description,
-    version="0.1.7",
+    version="0.1.8",
     author='Jonathan Chukinas',
     author_email='chukinas@gmail.com',
     url='https://github.com/jonathanchukinas/fdr',
