@@ -42,11 +42,3 @@ J&J Quick Start
     #. Note: You might see a note about ``pip`` being out of date. This is ok, but feel free to update it as suggested.
 #. **Run** ``fdr``
     a. In Command Prompt, type ``fdr``
-
-
-
-
-Features
---------
-
-* TBD
