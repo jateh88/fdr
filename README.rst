@@ -28,7 +28,7 @@ Quick Start
 J&J Quick Start
 ''''''''''''''''''''''
 1. **Install Python**
-    a. Navigate to J&J App Store.
+    a. Navigate to J&J App Store. You may need to use Internet Explorer. Users have had difficulty with Chrome.
     #. Search ``Python``. You should see something similar to ``Python 3.6``. Add it to cart and install.
     #. No restart is required.
 #. **Run Command Prompt with Elevated Privileges**
