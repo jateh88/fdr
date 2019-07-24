@@ -11,6 +11,8 @@ class ID(Field):
         # Init. an empty list that will contain the spreadsheet rows where discrepancies are found
 
         click.echo("Validating ID Field!")
+
+        """
         error_indices = []
         # for indices (location of errors) and ids (value in cell) in self (input argument) enumerate list starting
         # with 1. This will offset indices so it can be used to directly reference excel sheet (row#)
@@ -42,3 +44,4 @@ class ID(Field):
             return True
         else:
             return False
+    """

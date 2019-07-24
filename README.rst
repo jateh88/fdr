@@ -42,3 +42,10 @@ J&J Quick Start
     #. Note: You might see a note about ``pip`` being out of date. This is ok, but feel free to update it as suggested.
 #. **Run** ``fdr``
     a. In Command Prompt, type ``fdr``
+
+Validation Rules
+-----------------
+General Notes
+'''''''''''''
+- The FDR sheet must have the title 'Procedure Based Requirements'
+- If multiples headers share the same name, only the first will be used.

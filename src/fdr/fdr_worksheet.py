@@ -8,11 +8,11 @@ from pathlib import Path
 from openpyxl.utils.exceptions import InvalidFileException
 
 WorksheetColumn = namedtuple("WorksheetColumn", "header values")
-# TODO: refactor 'values' field to 'body'
 
 
 class FdrWorksheet:
 
+    # Initialize each field with its data
     def __init__(self, path):
         self._import_successful = False
         self.path = path
@@ -32,17 +32,11 @@ class FdrWorksheet:
     @staticmethod
     def _get_worksheet(path, worksheet_name):
         """Return list of WorksheetColumn objects"""
-        # TODO add a check to see if this is a valid path.
-        #   Add a try
         wb = openpyxl.load_workbook(
             filename=path,
             read_only=True,
             data_only=True,
         )
-        # raise ValueError(f"{worksheet_name} worksheet not found.")
-        # TODO replace valueerror with custom validation error
-        # TODO: add extra functionality. If exact worksheet name is not found,
-        #   use the most similar one and inform user of this.
         worksheet_names = [name.lower() for name in wb.sheetnames]
 
         try:
