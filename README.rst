@@ -49,3 +49,71 @@ General Notes
 '''''''''''''
 - The FDR sheet must have the title 'Procedure Based Requirements'
 - If multiples headers share the same name, only the first will be used.
+
+ID - Column A
+'''''''''''''
+- column exists (WorkItemObject)
+- not empty (WorkItemObject)
+- sorts alphabetically (CascadeObject)
+
+Cascade Block - Columns B-G
+'''''''''''''''''''''''''''
+- column exists (WorkItemObject)
+- one and only one cell gets marked (WorkItemObject)
+- no missing steps (CascadeObject)
+- all threads start w/ Procedure Step (CascadeObject)
+- each thread terminates in 'F' or 'C' (CascadeObject)
+- all DO Solution levels get used (CascadeObject)
+
+Cascade Level - Column H
+''''''''''''''''''''''''
+- column exists (WorkItemObject)
+- not empty (WorkItemObject)
+- validated input list (WorkItemObject)
+- matches selection in Cascade Block (WorkItemObject)
+
+Requirement Statement - Column I
+''''''''''''''''''''''''''''''''
+- column exists (WorkItemObject)
+- Not empty (WorkItemObject)
+- CHILD - valid pointer (CascadeObject)
+- ADDITIONALPARENT 
+- valid pointer (CascadeObject)
+- check for ______ hashtags e.g. #Function, #MatingParts (WorkItemObject)
+- report on extra tags found? (WorkItemObject)
+
+Requirement Rationale - Column J
+''''''''''''''''''''''''''''''''
+- column exists (WorkItemObject)
+- not empty (WorkItemObject)
+
+VorV Strategy - Column K
+''''''''''''''''''''''''
+- column exists (WorkItemObject)
+- not empty (WorkItemObject)
+
+VorV Results - Column L
+'''''''''''''''''''''''
+- column exists (WorkItemObject)
+- not empty (WorkItemObject)
+
+Devices - Column M
+'''''''''''''''''
+- column exists (WorkItemObject)
+- not empty (WorkItemObject)
+
+DO Features... - Column N
+'''''''''''''''''''''''''
+- column exists (WorkItemObject)
+- not empty (WorkItemObject)
+
+CTQ - Column O
+''''''''''''''
+- column exists (WorkItemObject)
+- not empty (WorkItemObject)
+- validated input list (WorkItemObject)
+
+Other
+'''''
+- 'N/A' check? (WorkItemObject)
+- color? 
