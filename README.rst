@@ -55,6 +55,8 @@ ID - Column A
 - column exists (WorkItemObject)
 - not empty (WorkItemObject)
 - sorts alphabetically (CascadeObject)
+- if procedure step, is formatted "P###" e.g. P010 
+- if need, input or output, is formatted "P###-###" where first three digits correlate to procedure step. e.g. P010-010. 
 
 Cascade Block - Columns B-G
 '''''''''''''''''''''''''''
@@ -62,8 +64,9 @@ Cascade Block - Columns B-G
 - one and only one cell gets marked (WorkItemObject)
 - no missing steps (CascadeObject)
 - all threads start w/ Procedure Step (CascadeObject)
-- each thread terminates in 'F' or 'C' (CascadeObject)
-- all DO Solution levels get used (CascadeObject)
+- each thread terminates in 'F' (CascadeObject)
+- all DO Solution levels get used (CascadeObject) *
+- only contains characters X or F
 
 Cascade Level - Column H
 ''''''''''''''''''''''''
@@ -71,6 +74,7 @@ Cascade Level - Column H
 - not empty (WorkItemObject)
 - validated input list (WorkItemObject)
 - matches selection in Cascade Block (WorkItemObject)
+- is "procedure step", "voc user need", "busniess need", "risk need", "design input" or "design output"
 
 Requirement Statement - Column I
 ''''''''''''''''''''''''''''''''
@@ -91,29 +95,41 @@ VorV Strategy - Column K
 ''''''''''''''''''''''''
 - column exists (WorkItemObject)
 - not empty (WorkItemObject)
+- if "business need", strategy is not required. all others require a strategy
 
 VorV Results - Column L
 '''''''''''''''''''''''
 - column exists (WorkItemObject)
 - not empty (WorkItemObject)
+- if "business need", results are not required. all others require results
+- if windchill number is present, check its formatting. (10 digits)
+- print report of applicable documents? 
 
 Devices - Column M
 '''''''''''''''''
 - column exists (WorkItemObject)
 - not empty (WorkItemObject)
+- no repeats in cell
+- print report of device list?
 
 DO Features... - Column N
 '''''''''''''''''''''''''
 - column exists (WorkItemObject)
 - not empty (WorkItemObject)
+- if contains features that are CTQs, CTQ ID should be formatted as "(CTQ##)"
+- if contains features that are CTQs, check that CTQ Y/N column is "yes"
+- print report of CTQ IDs and correlated features/devices?
 
-CTQ - Column O
+CTQ Y/N - Column O
 ''''''''''''''
 - column exists (WorkItemObject)
 - not empty (WorkItemObject)
 - validated input list (WorkItemObject)
+- is "yes", "no", "N/A", or " - " (only procedure step can have " - ")
+- if yes, check for CTQ IDs in DO Features column
 
 Other
 '''''
 - 'N/A' check? (WorkItemObject)
+- " - " check
 - color? 
