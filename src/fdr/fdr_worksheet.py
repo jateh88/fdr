@@ -16,12 +16,12 @@ class FdrWorksheet:
     def __init__(self, path):
         self._import_successful = False
         self.path = path
-        self.worksheet_name = "Procedure Based Requirements"
+        worksheet_name = "Procedure Based Requirements"
         try:
             if path == '.':
                 raise ValueError
-            worksheet = self._get_worksheet(path, self.worksheet_name)
-            self._fields = self._initialize_fields(field_classes, worksheet)
+            worksheet_columns = self._get_worksheet(path, worksheet_name)
+            self._fields = self._initialize_fields(worksheet_columns)
             self._import_successful = True
         except ValueError:
             click.echo("Error: No file selected")
@@ -57,9 +57,9 @@ class FdrWorksheet:
         return ws_data
 
     @staticmethod
-    def _initialize_fields(field_classes, worksheet):
-        """Get list of field objects that each contain their portion of the worksheet"""
-        return [Field(worksheet) for Field in field_classes]
+    def _initialize_fields(field_classes, worksheet_columns):
+        """Get list of field objects that each contain their portion of the worksheet_columns"""
+        return [Field(worksheet_columns) for Field in field_classes]
 
     def validate(self):
         """Validate each field (e.g. 'ID', 'Devices')"""
