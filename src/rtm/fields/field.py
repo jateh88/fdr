@@ -1,5 +1,7 @@
 import click
-# from fdr import WorksheetColumn
+from collections import namedtuple
+
+WorksheetColumn = namedtuple("WorksheetColumn", "header values")
 
 
 class FieldNotFound:
@@ -62,7 +64,7 @@ class Field:
     # --- VALIDATE ------------------------------------------------------------
 
     def validate(self):
-        click.echo("Validating __ Field!")
+        click.echo(f"Validating the '{self.get_field_name()}' field!")
 
     @classmethod
     def validate_column_position(cls, previous_column_num):

@@ -1,7 +1,7 @@
 import click
-import fdr
+import rtm
 
 
 @click.command()
-def fdr_cli():
-    fdr.validate()
+def rtm_cli():
+    rtm.validate()

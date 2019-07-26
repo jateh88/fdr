@@ -1,7 +1,7 @@
 import click
-from .path_handling import get_rtm_path
-from .fdr_worksheet import FdrWorksheet
-# from fdr.exceptions import RTMValidatorError
+from src.rtm.path_handling import get_rtm_path
+from src.rtm.rtm_worksheet import RTMWorksheet
+# from src.rtm.exceptions import RTMValidatorError
 import time
 
 
@@ -15,9 +15,9 @@ def validate():
     time.sleep(2)
     try:
         path = get_rtm_path()
-        worksheet = FdrWorksheet(path)
+        worksheet = RTMWorksheet(path)
         worksheet.validate()
-    except RTMValidatorError as e:
+    except #RTMValidatorError as e:
         click.echo(e)
 
     click.echo(

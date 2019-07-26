@@ -16,7 +16,7 @@ setuptools.setup(
     install_requires=["click", "openpyxl"],
     entry_points="""
         [console_scripts]
-        fdr=fdr.cli:fdr_cli
+        rtm=rtm.cli:rtm_cli
     """,
 )
 
