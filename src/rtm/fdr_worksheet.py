@@ -1,9 +1,9 @@
 # This is a list of classes, each containing the logic for a worksheet field (or grouping of fields):
 import openpyxl
 import click
-# from .fields import field_class_seq
+from src.rtm.fields import field_class_seq
 from fdr.fields import field_class_seq as field_classes
-from fdr.exceptions import RTMValidatorError, RTMValidatorFileError
+# from fdr.exceptions import RTMValidatorError, RTMValidatorFileError
 from collections import namedtuple
 
 WorksheetColumn = namedtuple("WorksheetColumn", "header values")

@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 from pathlib import Path
-from fdr.exceptions import RTMValidatorError, RTMValidatorFileError
+# from .exceptions import RTMValidatorError, RTMValidatorFileError
 import click
 
 

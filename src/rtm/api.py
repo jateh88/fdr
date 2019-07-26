@@ -1,7 +1,7 @@
 import click
 from .path_handling import get_rtm_path
 from .fdr_worksheet import FdrWorksheet
-from fdr.exceptions import RTMValidatorError
+# from fdr.exceptions import RTMValidatorError
 import time
 
 
