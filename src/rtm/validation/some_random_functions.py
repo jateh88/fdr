@@ -36,7 +36,7 @@ def get_first_integer_sequence(value):
         return output
 
 
-def convert_to_string_with_leading_zeroes(value, min_length=0):
+def convert_to_string_with_leading_zeroes(value, min_length=0) -> str:
     """
     `84, 3` --> `084`
     `321, 1` --> `321`

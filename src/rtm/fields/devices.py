@@ -1,4 +1,4 @@
-from src.rtm.fields import Field
+from rtm.fields import Field
 
 
 class Devices(Field):

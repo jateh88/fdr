@@ -1,8 +1,8 @@
 import click
-from src.rtm.path_handling import get_rtm_path
-from src.rtm.rtm_worksheet import RTMWorksheet
-# from src.rtm.exceptions import RTMValidatorError
 import time
+from rtm.path_handling import get_rtm_path
+from rtm.rtm_worksheet import RTMWorksheet
+from rtm.exceptions import RTMValidatorError
 
 
 def validate():
@@ -17,7 +17,7 @@ def validate():
         path = get_rtm_path()
         worksheet = RTMWorksheet(path)
         worksheet.validate()
-    except #RTMValidatorError as e:
+    except RTMValidatorError as e:
         click.echo(e)
 
     click.echo(

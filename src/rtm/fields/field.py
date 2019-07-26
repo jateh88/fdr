@@ -1,7 +1,7 @@
 import click
 from collections import namedtuple
 
-WorksheetColumn = namedtuple("WorksheetColumn", "header values")
+WorksheetColumn = namedtuple("WorksheetColumn", "header body")
 
 
 class FieldNotFound:
@@ -14,13 +14,15 @@ class Field:
     # --- INITIALIZE ----------------------------------------------------------
 
     def __init__(self, all_worksheet_columns):
-        if not isinstance(all_worksheet_columns, WorksheetColumn):
-            raise TypeError(
-                f"You tried initializing the {self.get_field_name()} field "
-                f"with something other than a {WorksheetColumn.__name__} object"
-            )
 
-        # TODO do a type check (sequence of WorksheetColumn objects)
+        pseudocode = """
+        For each column
+            If header is a match:
+                save the body to a tuple in instance
+                Mark field as "found"
+        """
+
+
 
         worksheet_headers = tuple(column.header for column in all_worksheet_columns)
         worksheet_body = tuple(column.values for column in all_worksheet_columns)

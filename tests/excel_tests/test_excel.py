@@ -1,4 +1,5 @@
 import openpyxl
+import pytest
 from pathlib import Path
 
 
@@ -25,7 +26,7 @@ def test_integers_from_excel():
 # Lessons Learned: integers can be casted from excel document including formula calculated values using data_only flag
 
 
-def test_string_comparison_approach_from_excel():
+def test_string_comparison():
     path = Path(__file__).parent / "test.xlsx"
     wb = openpyxl.load_workbook(filename=path, read_only=True)
     ws = wb["strings"]

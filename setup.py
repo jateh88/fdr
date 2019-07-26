@@ -4,8 +4,8 @@ with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="fdr",
-    description="Validate Functional & Design Requirements.",
+    name="rtm",
+    description="Validate Requirements Trace Matrix.",
     long_description=long_description,
     version="0.1.8",
     author='Jonathan Chukinas',

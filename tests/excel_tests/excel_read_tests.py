@@ -5,16 +5,8 @@ modified slightly to suit the needs of this file.
 
 """
 
-#use pip to get all modules.
-import random
 import logging
 import openpyxl
-from pathlib import Path
-from bin.excel_data_handling.data_fields import ApplicationDataFields
-
-
-# write a function that gets path to excel file
-#def get_path()
 
 
 def get_dicts_from_excel(path):

@@ -1,39 +1,38 @@
-# This is a list of classes, each containing the logic for a worksheet field (or grouping of fields):
 import openpyxl
 import click
-from src.rtm.fields import WorksheetColumn
-from src.rtm.fields import field_classes
+# from src.rtm.fields import WorksheetColumn, field_classes
+from rtm.fields import WorksheetColumn, field_classes
+from rtm.exceptions import RTMValidatorFileError
 
 
 class RTMWorksheet:
 
     # Initialize each field with its data
     def __init__(self, path):
-        worksheet = self._get_worksheet(path)
+        worksheet = self._get_worksheet(path, worksheet_name = "Procedure Based Requirements")
         self._fields = self._initialize_fields(field_classes, worksheet)
 
     @staticmethod
-    def _get_worksheet(path):
+    def _get_worksheet(path, worksheet_name):
         """Return list of WorksheetColumn objects"""
 
         # --- Get Workbook ----------------------------------------------------
         wb = openpyxl.load_workbook(
             filename=str(path),
-            # read_only=True,
-            # data_only=True,
+            read_only=True,
+            data_only=True,
         )
 
-        # --- Check for Worksheet ---------------------------------------------
-        worksheet_name = "Procedure Based Requirements"
-        worksheet_names = [name.lower() for name in wb.sheetnames]
-        try:
-            worksheet_index = worksheet_names.index(worksheet_name.lower())
-        except ValueError:
+        # --- Get Worksheet ---------------------------------------------------
+        ws = None
+        for sheetname in wb.sheetnames:
+            if sheetname.lower() == worksheet_name.lower():
+                ws = wb[sheetname]
+        if ws == None:
             raise RTMValidatorFileError(
                 f"\nError: The RTM workbook does not contain a '{worksheet_name}' worksheet")
 
         # --- Convert Worksheet to WorksheetColumn objects --------------------
-        ws = wb[worksheet_index]
         ws_data = []
         start_column_num = 1
         for col in range(start_column_num, ws.max_column + 1):

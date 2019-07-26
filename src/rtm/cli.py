@@ -1,7 +1,7 @@
 import click
-import rtm
+from rtm import api
 
 
 @click.command()
 def rtm_cli():
-    rtm.validate()
+    api.validate()
