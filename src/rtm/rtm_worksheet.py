@@ -1,15 +1,11 @@
 # This is a list of classes, each containing the logic for a worksheet field (or grouping of fields):
 import openpyxl
 import click
-# from .fields import field_class_seq
-from fdr.fields import field_class_seq as field_classes
-from fdr.exceptions import RTMValidatorError, RTMValidatorFileError
-from collections import namedtuple
-
-WorksheetColumn = namedtuple("WorksheetColumn", "header values")
+from src.rtm.fields import WorksheetColumn
+from src.rtm.fields import field_classes
 
 
-class FdrWorksheet:
+class RTMWorksheet:
 
     # Initialize each field with its data
     def __init__(self, path):
@@ -58,9 +54,9 @@ class FdrWorksheet:
         return ws_data
 
     @staticmethod
-    def _initialize_fields(field_classes, worksheet):
-        """Get list of field objects that each contain their portion of the worksheet"""
-        return [Field(worksheet) for Field in field_classes]
+    def _initialize_fields(field_classes, worksheet_columns):
+        """Get list of field objects that each contain their portion of the worksheet_columns"""
+        return [Field(worksheet_columns) for Field in field_classes]
 
     def validate(self):
         """Validate each field (e.g. 'ID', 'Devices')"""

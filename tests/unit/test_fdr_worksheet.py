@@ -24,7 +24,7 @@ def test_initialize_fields():
     ws_data = test_get_worksheet()
     field_seq = FdrWorksheet._initialize_fields(
         field_classes=field_class_seq,
-        worksheet=ws_data,
+        worksheet_columns=ws_data,
     )
     assert field_seq[0].get_names() == ['id']
 
