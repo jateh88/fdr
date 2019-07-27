@@ -2,4 +2,4 @@ from rtm.fields import Field
 
 
 class Devices(Field):
-    _header_names = ['devices']
+    field_name = 'devices'

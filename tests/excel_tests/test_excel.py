@@ -3,6 +3,7 @@ import pytest
 from pathlib import Path
 
 
+@pytest.mark.skip("These are only experiments that slow down the real tests")
 def test_integers_from_excel():
     path = Path(__file__).parent / "test.xlsx"
     wb = openpyxl.load_workbook(filename=path, data_only=True)  # NOTE: data_only flag used for value instead of formula
@@ -26,6 +27,7 @@ def test_integers_from_excel():
 # Lessons Learned: integers can be casted from excel document including formula calculated values using data_only flag
 
 
+@pytest.mark.skip("These are only experiments that slow down the real tests")
 def test_string_comparison():
     path = Path(__file__).parent / "test.xlsx"
     wb = openpyxl.load_workbook(filename=path, read_only=True)
@@ -44,6 +46,7 @@ def test_string_comparison():
 # lower or find.
 
 
+@pytest.mark.skip("These are only experiments that slow down the real tests")
 def test_multi_line_cells():
     path = Path(__file__).parent / "test.xlsx"
     wb = openpyxl.load_workbook(filename=path, read_only=True)
