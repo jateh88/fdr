@@ -5,6 +5,6 @@ Note, this only works if this package is installed. See setup.py for details.
 """
 # from src.rtm.api import validate
 # from src.rtm.rtm_worksheet import RTMWorksheet
-# from src.rtm.fields import WorksheetColumn, Field, field_classes
-# from src.rtm import fields
+# from src.rtm.fc import WorksheetColumn, Field, field_classes
+# from src.rtm import fc
 

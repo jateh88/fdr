@@ -29,15 +29,13 @@ class Field:
             # Get first matching column data (any duplicate columns are ignored; user rcv warning)
             self._body = worksheet_columns[0]
 
-    def validate(self):
-        self._get_validation_raw_data()
-        self._print_validation_report()
+    def validate(self) -> None:
+        val_results = self._get_validation_raw_data()
+        self._print_validation_report(val_results)
 
-    def _get_validation_raw_data(self):
+    def _get_validation_raw_data(self) -> dict:
         click.echo(f"Validating the '{self.get_field_name()}' field!")
-
-    def _print_validation_report(self):
-        click.echo(f"Generating validation report for the '{self.get_field_name()}' field!")
+        return dict()
 
     def field_found(self):
         if self._body is None:

@@ -1,6 +1,6 @@
 import openpyxl
 import click
-from rtm.fields import WorksheetColumn, field_classes as fields
+from rtm.fields import WorksheetColumn, field_classes as fc
 from rtm.exceptions import RTMValidatorFileError
 
 
@@ -12,7 +12,7 @@ class RTMWorksheet:
             path=path,
             worksheet_name="Procedure Based Requirements",
         )
-        self.fields = self._initialize_fields(fields, worksheet_columns)
+        self.fields = self._initialize_fields(fc, worksheet_columns)
 
     @staticmethod
     def _get_worksheet_columns(path, worksheet_name):
@@ -53,16 +53,24 @@ class RTMWorksheet:
     @staticmethod
     def _initialize_fields(field_classes, worksheet_columns):
         """Get list of field objects that each contain their portion of the worksheet_columns"""
-        return [field(worksheet_columns) for field in field_classes]
+        click.echo("\nInitializing fc...")
+        fields = []
+        with click.progressbar(field_classes) as bar:
+        #     fc.append(field(worksheet_columns))
+        # return
+            for field in bar:
+                fields.append(field(worksheet_columns))
+            # fields = [field(worksheet_columns) for field in bar]
+        return fields
 
     def validate(self):
         """Validate each field (e.g. 'ID', 'Devices')"""
-        if self._import_successful:
-            for field in self.fields:
-                field.validate()
-        else:
-            click.echo("Import was unsuccessful, so there wasn't anything to validate.")
-
+        # if self._import_successful:
+        #     for field in self.fields:
+        #         field.validate()
+        # else:
+        #     click.echo("Import was unsuccessful, so there wasn't anything to validate.")
+        pass
 
 if __name__ == "__main__":
     pass

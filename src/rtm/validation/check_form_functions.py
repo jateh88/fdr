@@ -25,7 +25,7 @@ def is_empty(value):
 
 # Any
 # check if value is N/A.
-# FDR rules: type of requirement/other circumstances may/may not allow N/A in certain fields
+# FDR rules: type of requirement/other circumstances may/may not allow N/A in certain fc
 def is_notapplic(value):
     # remove whitespace for direct string comparison. e.g. 'n / a ' becomes 'n/a'
     value = value.replace(" ", "")
@@ -73,7 +73,7 @@ def is_no(value):
 
 # Any
 # check if value contains 'not required' in its text
-# FDR rules: some fields are not required. e.g. validation is not required if requirement is a business need
+# FDR rules: some fc are not required. e.g. validation is not required if requirement is a business need
 def has_not_required(value):
     if value.lower().find("not required") != -1:
         return True

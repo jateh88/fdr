@@ -7,6 +7,7 @@ from rtm.exceptions import RTMValidatorError
 
 def validate():
 
+    click.clear()
     click.echo(
         "\nWelcome to the DePuy Synthes Requirements Trace Matrix (RTM) Validator."
         "\nPlease select an RTM excel file you wish to validate."
@@ -24,3 +25,7 @@ def validate():
         "\nThank you for using the RTM Validator."
         "\nIf you have questions or suggestions, please contact a Roebling team member."
     )
+
+
+if __name__ == "__main__":
+    validate()
