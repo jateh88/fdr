@@ -1,58 +1,62 @@
-def val_column_sort(correct_position):
-    result = {'title': "Field Order"}
+from typing import List
+from rtm.fields.validation_results import ValidationResult
+
+
+def val_column_sort(correct_position) -> ValidationResult:
+    title = "Field Order"
     if correct_position:
-        result['score'] = 'Pass'
+        score = 'Pass'
+        explanation = None
     else:
-        result['score'] = 'Error'
-        result['explanation'] = 'Action Required: Move this column to its correct position'
-    return result
+        score = 'Error'
+        explanation = 'Action Required: Move this column to its correct position'
+    return ValidationResult(score, title, explanation)
 
 
-def val_column_exist(field_found):
-    result = {'title': "Field Exist"}
+def val_column_exist(field_found) -> ValidationResult:
+    title = "Field Exist"
     if field_found:
-        result['score'] = 'Pass'
+        score = 'Pass'
+        explanation = None
     else:
-        result['score'] = 'Error'
-        result['explanation'] = 'Field not found'
-    return result
+        score = 'Error'
+        explanation = 'Field not found'
+    return ValidationResult(score, title, explanation)
 
 
-def example_results():
-    expl = 'This is an example explanation'
-    pass_result = {
-        'score': 'Pass',
-        'title': 'Pass Example',
-        'explanation': expl
-    }
-    warning_result = {
-        'score': 'Warning',
-        'title': 'Warning Example',
-        'explanation': expl
-    }
-    error_result = {
-        'score': 'Error',
-        'title': 'Error Example',
-        'explanation': expl
-    }
-    return [pass_result, warning_result, error_result]
+def example_results() -> List[ValidationResult]:
+    explanation = 'This is an example explanation'
+    examples = [
+        ValidationResult('Pass', 'Pass Example', explanation),
+        ValidationResult('Warning', 'Warning Example', explanation),
+        ValidationResult('Error', 'Error Example', explanation),
+    ]
+    return examples
 
 
-def cells_must_not_be_empty(values) -> dict:
-    result = {'title': "Not Empty"}
-    rows = []
+def cells_must_not_be_empty(values) -> ValidationResult:
+    title = "Not Empty"
+    indices = []
     for index, value in enumerate(values):
         if not isinstance(value, str) or not value:
-            rows.append(get_row(index))
-    if not rows:
-        result['score'] = 'Pass'
-        result['explanation'] = 'All cells are non-blank'
+            indices.append(index)
+    if not indices:
+        score = 'Pass'
+        explanation = 'All cells are non-blank'
     else:
-        result['score'] = 'Error'
-        result['explanation'] = 'Action Required. The following rows are blank:'
-        result['rows'] = rows
-    return result
+        score = 'Error'
+        explanation = 'Action Required. The following rows are blank:'
+    return ValidationResult(score, title, explanation, indices)
 
 
 def get_row(index):
     return index + 2
+
+
+if __name__ == "__main__":
+    from collections import namedtuple
+
+    NP = namedtuple("NP", "first second third")
+    np = NP('first', 'second', 'third')
+    print(np)
+    print(None)

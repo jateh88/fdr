@@ -1,6 +1,6 @@
 import click
 from collections import namedtuple
-from rtm.fields.print_val_results import print_validation_report
+from rtm.fields.validation_results import print_validation_report
 import rtm.fields.validation as val
 from typing import List
 
