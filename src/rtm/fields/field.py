@@ -1,5 +1,8 @@
 import click
 from collections import namedtuple
+from rtm.fields.print_val_results import print_validation_report
+import rtm.fields.validation as val
+from typing import List
 
 WorksheetColumn = namedtuple("WorksheetColumn", "header body")
 
@@ -10,18 +13,20 @@ class Field:
 
     def __init__(self, all_worksheet_columns):
 
-        matching_worksheet_columns = [
-            (index, ws_col)
-            for index, ws_col in enumerate(all_worksheet_columns)
-            if ws_col.header.lower() == self.get_field_name().lower()
-        ]
+        # --- Get All Matching Columns ----------------------------------------
+        # matching_worksheet_columns = [
+        #     (index, ws_col)
+        #     for index, ws_col in enumerate(all_worksheet_columns)
+        #     if ws_col.header.lower() == self.get_field_name().lower()
+        # ]
+        matching_worksheet_columns = self._get_matching_worksheet_columns(all_worksheet_columns, self.get_field_name())
 
-        # Defaults:
+        # --- Set Defaults ----------------------------------------------------
         self._indices = None  # Used in later check of relative column position
         self._body = None  # column data
         self._correct_position = None
 
-        # Override defaults if matches are found:
+        # --- Override defaults if matches are found --------------------------
         if len(matching_worksheet_columns) >= 1:
             indices, worksheet_columns = zip(*matching_worksheet_columns)
             # Get all matching _indices (used for checking duplicate data and proper sorting)
@@ -29,13 +34,26 @@ class Field:
             # Get first matching column data (any duplicate columns are ignored; user rcv warning)
             self._body = worksheet_columns[0]
 
-    def validate(self) -> None:
-        val_results = self._get_validation_raw_data()
-        self._print_validation_report(val_results)
+    @staticmethod
+    def _get_matching_worksheet_columns(all_worksheet_columns, field_name):
+        """Called by constructor to get matching WorksheetColumn objects"""
+        matching_worksheet_columns = [
+            (index, ws_col)
+            for index, ws_col in enumerate(all_worksheet_columns)
+            if ws_col.header.lower() == field_name().lower()
+        ]
+        return matching_worksheet_columns
 
-    def _get_validation_raw_data(self) -> dict:
-        click.echo(f"Validating the '{self.get_field_name()}' field!")
-        return dict()
+    def validate(self) -> None:
+        """Called by RTMWorksheet object to val-check and report out on field."""
+        val_results = [val.val_column_exist(self.field_found())]
+        if self.field_found():
+            val_results.append(val.val_column_sort(self._correct_position))
+            val_results += self._validate_this_field()
+        print_validation_report(self.field_name, val_results)
+
+    def _validate_this_field(self) -> List[dict]:
+        return []
 
     def field_found(self):
         if self._body is None:
@@ -61,7 +79,10 @@ class Field:
 
 
 if __name__ == "__main__":
-    from collections import namedtuple
-
-    yarp = namedtuple("WorksheetColumn", "field_name body")
-    print(yarp.__name__)
+    list = ['1']
+    second = '2'
+    third = ['3', '4']
+    list.append(second)
+    print(list)
+    # list.append(third)
+    print(list+third)

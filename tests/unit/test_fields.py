@@ -2,6 +2,7 @@ import pytest
 from rtm.fields import field_classes
 from rtm.exceptions import RTMValidatorError
 
+
 @pytest.mark.parametrize("field_class", field_classes)
 @pytest.mark.parametrize("dups_count", [1, 2])
 def test_init_with_good_data(worksheet_columns, field_class, dups_count):

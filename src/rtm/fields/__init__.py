@@ -1,15 +1,33 @@
-
 # --- Parent Field ------------------------------------------------------------
 from rtm.fields.field import Field
 from rtm.fields.field import WorksheetColumn
 
+
 # --- Subclass Fields ---------------------------------------------------------
-from rtm.fields.id import ID
-from rtm.fields.devices import Devices
+from rtm.fields.field_subclasses import (
+    ID,
+    CascadeLevel,
+    ReqStatement,
+    ReqRationale,
+    VVStrategy,
+    VVResults,
+    Devices,
+    DOFeatures,
+    CTQ,
+)
+from rtm.fields.cascade_block import CascadeBlock
 
 
 # --- Sequence of Field Classes -----------------------------------------------
 field_classes = (
     ID,
+    # CascadeBlock,
+    CascadeLevel,
+    ReqStatement,
+    ReqRationale,
+    VVStrategy,
+    VVResults,
     Devices,
+    DOFeatures,
+    CTQ,
 )

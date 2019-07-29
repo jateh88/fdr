@@ -49,18 +49,17 @@ General Notes
 '''''''''''''
 - The FDR sheet must have the title 'Procedure Based Requirements'
 - If multiples headers share the same name, only the first will be used.
+- All columns get checked for 1) Exist and 2) Correct left-to-right order.
 
 ID - Column A
 '''''''''''''
-- column exists (WorkItemObject)
-- not empty (WorkItemObject)
-- sorts alphabetically (CascadeObject)
+- not empty
+- sorts alphabetically
 - if procedure step, is formatted "P###" e.g. P010 
 - if need, input or output, is formatted "P###-###" where first three digits correlate to procedure step. e.g. P010-010. 
 
 Cascade Block - Columns B-G
 '''''''''''''''''''''''''''
-- column exists (WorkItemObject)
 - one and only one cell gets marked (WorkItemObject)
 - no missing steps (CascadeObject)
 - all threads start w/ Procedure Step (CascadeObject)
@@ -70,15 +69,13 @@ Cascade Block - Columns B-G
 
 Cascade Level - Column H
 ''''''''''''''''''''''''
-- column exists (WorkItemObject)
-- not empty (WorkItemObject)
-- validated input list (WorkItemObject)
+- not empty
+- validated input list
 - matches selection in Cascade Block (WorkItemObject)
 - is "procedure step", "voc user need", "busniess need", "risk need", "design input" or "design output"
 
 Requirement Statement - Column I
 ''''''''''''''''''''''''''''''''
-- column exists (WorkItemObject)
 - Not empty (WorkItemObject)
 - CHILD - valid pointer (CascadeObject)
 - ADDITIONALPARENT 
@@ -88,18 +85,15 @@ Requirement Statement - Column I
 
 Requirement Rationale - Column J
 ''''''''''''''''''''''''''''''''
-- column exists (WorkItemObject)
 - not empty (WorkItemObject)
 
 VorV Strategy - Column K
 ''''''''''''''''''''''''
-- column exists (WorkItemObject)
 - not empty (WorkItemObject)
 - if "business need", strategy is not required. all others require a strategy
 
 VorV Results - Column L
 '''''''''''''''''''''''
-- column exists (WorkItemObject)
 - not empty (WorkItemObject)
 - if "business need", results are not required. all others require results
 - if windchill number is present, check its formatting. (10 digits)
@@ -107,14 +101,12 @@ VorV Results - Column L
 
 Devices - Column M
 '''''''''''''''''
-- column exists (WorkItemObject)
 - not empty (WorkItemObject)
 - no repeats in cell
 - print report of device list?
 
 DO Features... - Column N
 '''''''''''''''''''''''''
-- column exists (WorkItemObject)
 - not empty (WorkItemObject)
 - if contains features that are CTQs, CTQ ID should be formatted as "(CTQ##)"
 - if contains features that are CTQs, check that CTQ Y/N column is "yes"
@@ -122,7 +114,6 @@ DO Features... - Column N
 
 CTQ Y/N - Column O
 ''''''''''''''
-- column exists (WorkItemObject)
 - not empty (WorkItemObject)
 - validated input list (WorkItemObject)
 - is "yes", "no", "N/A", or " - " (only procedure step can have " - ")
@@ -132,4 +123,3 @@ Other
 '''''
 - 'N/A' check? (WorkItemObject)
 - " - " check
-- color? 
