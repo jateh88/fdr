@@ -2,6 +2,9 @@ from typing import List
 from rtm.fields.validation_results import ValidationResult
 
 
+
+
+
 def val_column_sort(correct_position) -> ValidationResult:
     title = "Field Order"
     if correct_position:
@@ -34,11 +37,11 @@ def example_results() -> List[ValidationResult]:
     return examples
 
 
-def cells_must_not_be_empty(values) -> ValidationResult:
+def val_cells_not_empty(values) -> ValidationResult:
     title = "Not Empty"
     indices = []
     for index, value in enumerate(values):
-        if not isinstance(value, str) or not value:
+        if not value:
             indices.append(index)
     if not indices:
         score = 'Pass'
@@ -53,10 +56,8 @@ def get_row(index):
     return index + 2
 
 
-if __name__ == "__main__":
-    from collections import namedtuple
+cell_validation_functions = [globals()[name] for name in globals() if name.startswith('val_cells_')]
 
-    NP = namedtuple("NP", "first second third")
-    np = NP('first', 'second', 'third')
-    print(np)
-    print(None)
+
+if __name__ == "__main__":
+    print(cell_validation_functions)

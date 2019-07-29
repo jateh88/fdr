@@ -1,7 +1,6 @@
 # --- Parent Field ------------------------------------------------------------
 from rtm.fields.field import Field
-from rtm.fields.field import WorksheetColumn
-
+from rtm.worksheet_columns import WorksheetColumn
 
 # --- Subclass Fields ---------------------------------------------------------
 from rtm.fields.field_subclasses import (

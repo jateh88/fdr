@@ -85,37 +85,37 @@ Requirement Statement
 
 Requirement Rationale
 '''''''''''''''''''''
-- not empty (WorkItemObject)
+- not empty
 
 VorV Strategy
 '''''''''''''
-- not empty (WorkItemObject)
+- not empty
 - if "business need", strategy is not required. all others require a strategy
 
 VorV Results
 ''''''''''''
-- not empty (WorkItemObject)
+- not empty
 - if "business need", results are not required. all others require results
 - if windchill number is present, check its formatting. (10 digits)
 - print report of applicable documents? 
 
 Devices
 '''''''
-- not empty (WorkItemObject)
+- not empty
 - no repeats in cell
 - print report of device list?
 
 DO Features
 '''''''''''
-- not empty (WorkItemObject)
+- not empty
 - if contains features that are CTQs, CTQ ID should be formatted as "(CTQ##)"
 - if contains features that are CTQs, check that CTQ Y/N column is "yes"
 - print report of CTQ IDs and correlated features/devices?
 
 CTQ Y/N
 '''''''
-- not empty (WorkItemObject)
-- validated input list (WorkItemObject)
+- not empty
+- validated input list
 - is "yes", "no", "N/A", or " - " (only procedure step can have " - ")
 - if yes, check for CTQ IDs in DO Features column
 

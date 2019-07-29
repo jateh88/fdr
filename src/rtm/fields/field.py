@@ -1,10 +1,7 @@
-import click
-from collections import namedtuple
-from rtm.fields.validation_results import print_validation_report
 import rtm.fields.validation as val
+from rtm.fields.validation_results import print_validation_report
 from typing import List
-
-WorksheetColumn = namedtuple("WorksheetColumn", "header body")
+from rtm.worksheet_columns import get_matching_worksheet_columns
 
 
 class Field:
@@ -19,7 +16,7 @@ class Field:
         #     for index, ws_col in enumerate(all_worksheet_columns)
         #     if ws_col.header.lower() == self.get_field_name().lower()
         # ]
-        matching_worksheet_columns = self._get_matching_worksheet_columns(all_worksheet_columns, self.get_field_name())
+        matching_worksheet_columns = get_matching_worksheet_columns(all_worksheet_columns, self.get_field_name())
 
         # --- Set Defaults ----------------------------------------------------
         self._indices = None  # Used in later check of relative column position
@@ -28,20 +25,11 @@ class Field:
 
         # --- Override defaults if matches are found --------------------------
         if len(matching_worksheet_columns) >= 1:
-            indices, worksheet_columns = zip(*matching_worksheet_columns)
-            # Get all matching _indices (used for checking duplicate data and proper sorting)
-            self._indices = indices
+            # indices, worksheet_columns = zip(*matching_worksheet_columns)
+            # Get all matching indices (used for checking duplicate data and proper sorting)
+            self._indices = [col.index for col in matching_worksheet_columns]
             # Get first matching column data (any duplicate columns are ignored; user rcv warning)
-            self._body = worksheet_columns[0]
-
-    def _get_matching_worksheet_columns(self, all_worksheet_columns, field_name):
-        """Called by constructor to get matching WorksheetColumn objects"""
-        matching_worksheet_columns = [
-            (index, ws_col)
-            for index, ws_col in enumerate(all_worksheet_columns)
-            if ws_col.header.lower() == self.get_field_name().lower()
-        ]
-        return matching_worksheet_columns
+            self._body = matching_worksheet_columns[0].body
 
     def validate(self) -> None:
         """Called by RTMWorksheet object to val-check and report out on field."""

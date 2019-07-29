@@ -1,8 +1,9 @@
 import pytest
-from pathlib import Path
-from rtm.fields import WorksheetColumn
 from typing import List
+from pathlib import Path
+from rtm.worksheet_columns import WorksheetColumn, get_worksheet_columns
 from rtm.fields.validation import example_results
+from rtm.fields.validation_results import ValidationResult
 
 
 @pytest.fixture(scope="session")
@@ -18,7 +19,17 @@ def worksheet_columns() -> List[WorksheetColumn]:
         "Design Output Feature (with CTQ ID #)",
         "CTQ? Yes, No, N/A",
     ]
-    return [WorksheetColumn(header, [1, 2, 3]) for header in headers]
+    ws_cols = []
+    for index, header in enumerate(headers):
+        col = index + 1
+        ws_col = WorksheetColumn(
+            header=header,
+            body=[1, 2, 3],
+            index=index,
+            column=col,
+        )
+        ws_cols.append(ws_col)
+    return ws_cols
 
 
 @pytest.fixture(scope="session")
@@ -27,5 +38,10 @@ def rtm_path() -> Path:
 
 
 @pytest.fixture(scope="session")
-def dummy_val_results() -> List[dict]:
+def example_val_results() -> List[ValidationResult]:
     return example_results()
+
+
+@pytest.fixture(scope="session")
+def ws_cols_from_test_validation(rtm_path):
+    return get_worksheet_columns(rtm_path, worksheet_name='test_validation')

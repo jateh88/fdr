@@ -8,7 +8,13 @@ class ValidationResult:
         self._set_score(score)
         self._title = title
         self._explanation = explanation
-        self._indices = nonconforming_indices
+        self._set_indices(nonconforming_indices)
+
+    def _set_indices(self, indices):
+        if indices:
+            self.indices = tuple(indices)
+        else:
+            self.indices = ''
 
     def _set_score(self, score) -> None:
         if score not in self._scores_and_colors:
@@ -19,10 +25,10 @@ class ValidationResult:
         return self._scores_and_colors[self._score]
 
     def _get_rows(self) -> str:
-        if not self._indices:
+        if not self.indices:
             return ''
         first_row = 2  # this is the row # directly after the headers
-        return ' ' + str(index + first_row for index in self._indices)
+        return ' ' + str(index + first_row for index in self.indices)
 
     def print(self) -> None:
         # --- Print Score in Color ------------------------------------------------
@@ -31,7 +37,7 @@ class ValidationResult:
         click.secho(f"\t{self._title.upper()}", bold=True, nl=False)
         # --- Print Explanation (and Rows) ----------------------------------------
         if self._explanation:
-            click.secho(f' - {self._explanation}{self._indices}', nl=False)
+            click.secho(f' - {self._explanation}{self.indices}', nl=False)
         click.echo()  # new line
 
 
