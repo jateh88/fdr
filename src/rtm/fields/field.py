@@ -34,13 +34,12 @@ class Field:
             # Get first matching column data (any duplicate columns are ignored; user rcv warning)
             self._body = worksheet_columns[0]
 
-    @staticmethod
-    def _get_matching_worksheet_columns(all_worksheet_columns, field_name):
+    def _get_matching_worksheet_columns(self, all_worksheet_columns, field_name):
         """Called by constructor to get matching WorksheetColumn objects"""
         matching_worksheet_columns = [
             (index, ws_col)
             for index, ws_col in enumerate(all_worksheet_columns)
-            if ws_col.header.lower() == field_name().lower()
+            if ws_col.header.lower() == self.get_field_name().lower()
         ]
         return matching_worksheet_columns
 

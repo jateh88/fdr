@@ -19,17 +19,23 @@ def val_column_exist(field_found):
 
 
 def example_results():
-    first_result = {
+    expl = 'This is an example explanation'
+    pass_result = {
         'score': 'Pass',
-        'title': 'First Check',
-        'explanation': 'This is an explanation'
+        'title': 'Pass Example',
+        'explanation': expl
     }
-    second_result = {
+    warning_result = {
+        'score': 'Warning',
+        'title': 'Warning Example',
+        'explanation': expl
+    }
+    error_result = {
         'score': 'Error',
-        'title': 'Second Check',
-        'explanation': 'This is another explanation'
+        'title': 'Error Example',
+        'explanation': expl
     }
-    return [first_result, second_result]
+    return [pass_result, warning_result, error_result]
 
 
 def cells_must_not_be_empty(values) -> dict:
