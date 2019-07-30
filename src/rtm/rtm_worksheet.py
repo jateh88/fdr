@@ -1,8 +1,5 @@
-import openpyxl
 import click
 from rtm.fields import Field, field_classes as fc
-from rtm.worksheet_columns import WorksheetColumn
-from rtm.exceptions import RTMValidatorFileError
 from typing import List
 from rtm.worksheet_columns import get_worksheet_columns
 

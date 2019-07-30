@@ -2,7 +2,7 @@ from pathlib import Path
 import pytest
 from rtm.rtm_worksheet import RTMWorksheet
 from rtm.fields import Field, field_classes as fc
-from rtm.worksheet_columns import WorksheetColumn, get_worksheet_columns
+import rtm.worksheet_columns as wc
 
 
 def test_initialize_fields(worksheet_columns):
@@ -14,11 +14,11 @@ def test_initialize_fields(worksheet_columns):
 
 
 def test_get_worksheet(rtm_path):
-    worksheet_columns = get_worksheet_columns(
+    worksheet_columns = wc.get_worksheet_columns(
         path=rtm_path, worksheet_name="test_worksheet"
     )
     for ws_col in worksheet_columns:
-        assert isinstance(ws_col, WorksheetColumn)
+        assert isinstance(ws_col, wc.WorksheetColumn)
 
 
 def test_init_rtm_worksheet(rtm_path):

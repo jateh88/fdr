@@ -1,13 +1,13 @@
 import pytest
 from typing import List
 from pathlib import Path
-from rtm.worksheet_columns import WorksheetColumn, get_worksheet_columns
+import rtm.worksheet_columns as wc
 from rtm.fields.validation import example_results
 from rtm.fields.validation_results import ValidationResult
 
 
 @pytest.fixture(scope="session")
-def worksheet_columns() -> List[WorksheetColumn]:
+def worksheet_columns() -> List[wc.WorksheetColumn]:
     headers = [
         "ID",
         "Devices",
@@ -22,7 +22,7 @@ def worksheet_columns() -> List[WorksheetColumn]:
     ws_cols = []
     for index, header in enumerate(headers):
         col = index + 1
-        ws_col = WorksheetColumn(
+        ws_col = wc.WorksheetColumn(
             header=header,
             body=[1, 2, 3],
             index=index,
@@ -44,4 +44,4 @@ def example_val_results() -> List[ValidationResult]:
 
 @pytest.fixture(scope="session")
 def ws_cols_from_test_validation(rtm_path):
-    return get_worksheet_columns(rtm_path, worksheet_name='test_validation')
+    return wc.get_worksheet_columns(rtm_path, worksheet_name='test_validation')

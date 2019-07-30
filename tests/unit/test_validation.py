@@ -1,5 +1,5 @@
 from rtm.fields.validation import val_cells_not_empty
-from rtm.worksheet_columns import WorksheetColumn, get_first_matching_worksheet_column
+import rtm.worksheet_columns as wc
 import pytest
 from rtm.fields.validation import cell_validation_functions
 
@@ -19,7 +19,7 @@ def test_val_cell_functions(ws_cols_from_test_validation, val_func):
     ws_cols = ws_cols_from_test_validation
     header = val_func.__name__
     try:
-        ws_col: WorksheetColumn = get_first_matching_worksheet_column(ws_cols, header)
+        ws_col: wc.WorksheetColumn = wc.get_first_matching_worksheet_column(ws_cols, header)
     except IndexError:
         # raise IndexError(f"The test_validation ws is likely missing a '{header}' column")
         assert False

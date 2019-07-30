@@ -2,7 +2,7 @@ import click
 import tkinter as tk
 from tkinter import filedialog
 from pathlib import Path
-from rtm.exceptions import RTMValidatorError, RTMValidatorFileError
+import rtm.exceptions as exc
 
 
 def get_rtm_path(path_option='default') -> Path:
@@ -10,9 +10,9 @@ def get_rtm_path(path_option='default') -> Path:
         path = get_new_path_from_dialog()
         required_extensions = '.xlsx .xls'.split()
         if str(path) == '.':
-            raise RTMValidatorFileError("\nError: You didn't select a file")
+            raise exc.RTMValidatorFileError("\nError: You didn't select a file")
         if path.suffix not in required_extensions:
-            raise RTMValidatorFileError(
+            raise exc.RTMValidatorFileError(
                 f"\nError: You didn't select a file with "
                 f"a proper extension: {required_extensions}"
             )
@@ -32,5 +32,5 @@ def get_new_path_from_dialog() -> Path:
 if __name__ == "__main__":
     try:
         get_rtm_path()
-    except RTMValidatorError as e:
+    except exc.RTMValidatorError as e:
         print(e)
