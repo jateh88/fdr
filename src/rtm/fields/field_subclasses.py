@@ -1,14 +1,18 @@
 from typing import List
 from rtm.fields import Field
-import rtm.fields.validation as val
 from rtm.worksheet_columns import WorksheetColumn
+import rtm.fields.validation as val
 
 
 class ID(Field):
     field_name = "ID"
 
     def _validate_this_field(self) -> List[WorksheetColumn]:
-        return val.example_results()
+        results = [
+            val.val_cells_not_empty(self._body),
+        ]
+        results += val.example_results()
+        return results
 
 
 class CascadeLevel(Field):
