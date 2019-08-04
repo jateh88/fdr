@@ -1,53 +1,56 @@
 # --- Standard Library Imports ------------------------------------------------
-import pytest
-from typing import List
 from pathlib import Path
 
 # --- Third Party Imports -----------------------------------------------------
-# None
+import pytest
 
 # --- Intra-Package Imports ---------------------------------------------------
-import rtm.worksheet_columns as wc
-from rtm.fields.validation import example_results
-from rtm.fields.validation_results import ValidationResult
+from rtm.containers.fields import Fields
+import rtm.main.context_managers as context
+from rtm.containers.worksheet_columns import WorksheetColumns
+from rtm.containers.work_items import WorkItems
 
 
-@pytest.fixture(scope="session")
-def worksheet_columns() -> List[wc.WorksheetColumn]:
-    headers = [
-        "ID",
-        "Devices",
-        "Requirement Statement",
-        "Requirement Rationale",
-        "Cascade Level",
-        "Verification or Validation Strategy",
-        "Verification or Validation Results",
-        "Design Output Feature (with CTQ ID #)",
-        "CTQ? Yes, No, N/A",
-    ]
-    ws_cols = []
-    for index, header in enumerate(headers):
-        col = index + 1
-        ws_col = wc.WorksheetColumn(
-            header=header,
-            body=[1, 2, 3],
-            index=index,
-            column=col,
-        )
-        ws_cols.append(ws_col)
-    return ws_cols
+# --- Worksheet Path ----------------------------------------------------------
 
-
-@pytest.fixture(scope="session")
-def rtm_path() -> Path:
+def get_rtm_path():
     return Path(__file__).parent / "test_rtm.xlsx"
 
 
 @pytest.fixture(scope="session")
-def example_val_results() -> List[ValidationResult]:
-    return example_results()
+def fix_path() -> Path:
+    return get_rtm_path()
 
+
+# --- Worksheet Columns -------------------------------------------------------
+
+def get_worksheet_columns(worksheet_name):
+    with context.path.set(get_rtm_path()):
+        return WorksheetColumns(worksheet_name)
 
 @pytest.fixture(scope="session")
-def ws_cols_from_test_validation(rtm_path):
-    return wc.get_worksheet_columns(rtm_path, worksheet_name='test_validation')
+def fix_worksheet_columns():
+    return get_worksheet_columns
+
+
+# --- Fields ------------------------------------------------------------------
+
+def get_fields(worksheet_name):
+    with context.worksheet_columns.set(get_worksheet_columns(worksheet_name)):
+        return Fields()
+
+
+@pytest.fixture(scope="function")
+def fix_fields():
+    return get_fields
+
+
+# --- Work Items --------------------------------------------------------------
+
+def get_work_items(worksheet_name):
+    with context.fields.set(get_fields(worksheet_name)):
+        return WorkItems()
+
+@pytest.fixture(scope="function")
+def fix_work_items():
+    return get_work_items

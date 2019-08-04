@@ -106,3 +106,5 @@ ENV/
 
 # Scratches
 DI_experiment/
+
+Pipfile
