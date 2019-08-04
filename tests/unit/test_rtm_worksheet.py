@@ -1,5 +1,3 @@
-from pathlib import Path
-import pytest
 from rtm.rtm_worksheet import RTMWorksheet
 from rtm.fields import Field, field_classes as fc
 import rtm.worksheet_columns as wc

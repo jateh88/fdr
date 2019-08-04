@@ -2,9 +2,6 @@ from typing import List
 from rtm.fields.validation_results import ValidationResult
 
 
-
-
-
 def val_column_sort(correct_position) -> ValidationResult:
     title = "Field Order"
     if correct_position:

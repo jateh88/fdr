@@ -49,17 +49,20 @@ class VVResults(Field):
     def _validate_this_field(self) -> List[WorksheetColumn]:
         return []
 
+
 class DOFeatures(Field):
     field_name = "Design Output Feature (with CTQ ID #)"
 
     def _validate_this_field(self) -> List[WorksheetColumn]:
         return []
 
+
 class CTQ(Field):
     field_name = "CTQ? Yes, No, N/A"
 
     def _validate_this_field(self) -> List[WorksheetColumn]:
         return []
+
 
 class Devices(Field):
 

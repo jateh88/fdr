@@ -3,5 +3,5 @@ from rtm import api
 
 
 @click.command()
-def rtm_cli():
+def main():
     api.validate()

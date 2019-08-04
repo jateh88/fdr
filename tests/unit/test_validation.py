@@ -1,4 +1,3 @@
-from rtm.fields.validation import val_cells_not_empty
 import rtm.worksheet_columns as wc
 import pytest
 from rtm.fields.validation import cell_validation_functions

@@ -1,7 +1,12 @@
+# --- Standard Library Imports ------------------------------------------------
 from collections import namedtuple
-import openpyxl
-from rtm.exceptions import RTMValidatorFileError
 from typing import List
+
+# --- Third Party Imports -----------------------------------------------------
+import openpyxl
+
+# --- Intra-Package Imports ---------------------------------------------------
+from rtm.exceptions import RTMValidatorFileError
 
 WorksheetColumn = namedtuple("WorksheetColumn", "header body index column")
 
