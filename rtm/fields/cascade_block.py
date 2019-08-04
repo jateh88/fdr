@@ -1,4 +1,4 @@
-from rtm.fields import Field
+from rtm.fields.field import Field
 
 
 class CascadeBlock(Field):

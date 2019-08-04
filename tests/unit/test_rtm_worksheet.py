@@ -1,5 +1,6 @@
 from rtm.rtm_worksheet import RTMWorksheet
-from rtm.fields import Field, field_classes as fc
+from rtm.fields.field import Field
+from rtm.fields.field_subclasses import field_classes as fc
 import rtm.worksheet_columns as wc
 
 

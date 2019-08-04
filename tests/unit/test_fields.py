@@ -1,5 +1,5 @@
 import pytest
-from rtm.fields import field_classes
+from rtm.fields.field_subclasses import field_classes
 from rtm.exceptions import RTMValidatorError
 
 

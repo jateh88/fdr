@@ -1,9 +1,17 @@
 from typing import List
-from rtm.fields import Field
+from rtm.fields.field import Field
 from rtm.worksheet_columns import WorksheetColumn
 import rtm.fields.validation as val
 
+field_classes = []
 
+
+def collect_field(field):
+    field_classes.append(field)
+    return field
+
+
+@collect_field
 class ID(Field):
     field_name = "ID"
 
@@ -15,6 +23,7 @@ class ID(Field):
         return results
 
 
+@collect_field
 class CascadeLevel(Field):
     field_name = "Cascade Level"
 
@@ -22,6 +31,7 @@ class CascadeLevel(Field):
         return val.example_results()
 
 
+@collect_field
 class ReqStatement(Field):
     field_name = "Requirement Statement"
 
@@ -29,6 +39,7 @@ class ReqStatement(Field):
         return val.example_results()
 
 
+@collect_field
 class ReqRationale(Field):
     field_name = "Requirement Rationale"
 
@@ -36,6 +47,7 @@ class ReqRationale(Field):
         return [val.val_cells_not_empty(self._body)]
 
 
+@collect_field
 class VVStrategy(Field):
     field_name = "Verification or Validation Strategy"
 
@@ -43,6 +55,7 @@ class VVStrategy(Field):
         return val.example_results()
 
 
+@collect_field
 class VVResults(Field):
     field_name = "Verification or Validation Results"
 
@@ -50,6 +63,7 @@ class VVResults(Field):
         return []
 
 
+@collect_field
 class DOFeatures(Field):
     field_name = "Design Output Feature (with CTQ ID #)"
 
@@ -57,6 +71,7 @@ class DOFeatures(Field):
         return []
 
 
+@collect_field
 class CTQ(Field):
     field_name = "CTQ? Yes, No, N/A"
 
@@ -64,6 +79,7 @@ class CTQ(Field):
         return []
 
 
+@collect_field
 class Devices(Field):
 
     field_name = "Devices"
