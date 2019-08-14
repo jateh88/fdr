@@ -1,6 +1,6 @@
 """
 Whereas the validation functions return results that will be outputted by the RTM Validator,
-these "check" functions perform smaller tasks, like checking individual cells.
+these "checks" functions perform smaller tasks, like checking individual cells.
 """
 
 # --- Standard Library Imports ------------------------------------------------
@@ -45,3 +45,13 @@ def dict_contains_only_acceptable_entries(dictionary, acceptible_entries):
         if value not in acceptible_entries:
             return False
     return True
+
+
+allowed_cascade_levels = {  # keys: level, values: position
+        'PROCEDURE STEP': [0],
+        'VOC USER NEED': [1],
+        'BUSINESS NEED': [1],
+        'RISK NEED': [1],
+        'DESIGN INPUT': [2],
+        'DESIGN OUTPUT SOLUTION': list(range(3, 20))
+    }

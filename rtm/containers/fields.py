@@ -62,13 +62,13 @@ class Fields(collections.abc.Sequence):
         return len(self._fields)
 
     def validate(self):
-        click.echo(self)
+        # click.echo(self)
         for field_ in self:
-            click.echo(field_.get_name())
+            # click.echo(field_.get_name())
             field_.validate()
 
     def print(self):
-        click.echo(self)
+        # click.echo(self)
         for field_ in self:
             field_.print()
 
@@ -79,11 +79,12 @@ class ID(ft.Field):
     def __init__(self):
         super().__init__("ID")
 
-    def _validation_specific_to_this_field(self) -> List[ValidationResult]:
-        results = [
-            val.val_cells_not_empty(self._body),
+    def validate(self):
+        self._val_results = [
+            OutputHeader(self.get_name()),  # Start with header
+            val.val_column_exist(self.field_found()),
+            val.val_column_sort(self),
         ]
-        return results
 
 
 @Fields.collect_field()
@@ -105,22 +106,15 @@ class CascadeBlock(ft.Field):
         return field_names
 
     def validate(self):
-        """
-        if index=0, level must == 0. If not, error
-        """
-        work_items = context.work_items.get()
-        validation_outputs = [
-            OutputHeader(self.get_name()),
-            val.val_cascade_block_only_one_entry(work_items),
-            val.val_cascade_block_x_or_f(work_items),
-            val.val_cascade_block_use_all_columns()
+        self._val_results = [
+            OutputHeader(self.get_name()),  # Start with header
+            val.val_column_exist(self.field_found()),
+            val.val_column_sort(self),
+            val.val_cascade_block_not_empty(),
+            val.val_cascade_block_only_one_entry(),
+            val.val_cascade_block_x_or_f(),
+            val.val_cascade_block_use_all_columns(),
         ]
-        for output in validation_outputs:
-            output.print()
-
-    def print(self):
-        # TODO
-        click.echo("The Cascade Block isn't printing anything useful yet.")
 
     def field_found(self):
         if len(self) > 0:
@@ -167,8 +161,16 @@ class CascadeLevel(ft.Field):
     def __init__(self):
         super().__init__("Cascade Level")
 
-    # def _validation_specific_to_this_field(self) -> List[ValidationResult]:
-    #     return val.example_results()
+    def validate(self):
+
+        self._val_results = [
+            OutputHeader(self.get_name()),  # Start with header
+            val.val_column_exist(self.field_found()),
+            val.val_column_sort(self),
+            val.val_cells_not_empty(self.get_body()),
+            val.valid_cascade_levels(self),
+            val.val_matching_cascade_levels(),
+        ]
 
 
 @Fields.collect_field()
@@ -176,8 +178,12 @@ class ReqStatement(ft.Field):
     def __init__(self):
         super().__init__("Requirement Statement")
 
-    # def _validation_specific_to_this_field(self) -> List[ValidationResult]:
-    #     return val.example_results()
+    def validate(self):
+        self._val_results = [
+            OutputHeader(self.get_name()),  # Start with header
+            val.val_column_exist(self.field_found()),
+            val.val_column_sort(self),
+        ]
 
 
 @Fields.collect_field()
@@ -185,8 +191,13 @@ class ReqRationale(ft.Field):
     def __init__(self):
         super().__init__("Requirement Rationale")
 
-    # def _validation_specific_to_this_field(self) -> List[ValidationResult]:
-    #     return [val.val_cells_not_empty(self._body)]
+    def validate(self):
+        self._val_results = [
+            OutputHeader(self.get_name()),  # Start with header
+            val.val_column_exist(self.field_found()),
+            val.val_column_sort(self),
+            val.val_cells_not_empty(self.get_body()),
+        ]
 
 
 @Fields.collect_field()
@@ -194,16 +205,26 @@ class VVStrategy(ft.Field):
     def __init__(self):
         super().__init__("Verification or Validation Strategy")
 
-    # def _validation_specific_to_this_field(self) -> List[ValidationResult]:
-    #     return val.example_results()
+    def validate(self):
+        self._val_results = [
+            OutputHeader(self.get_name()),  # Start with header
+            val.val_column_exist(self.field_found()),
+            val.val_column_sort(self),
+            val.val_cells_not_empty(self.get_body())
+        ]
 
 
 @Fields.collect_field()
 class VVResults(ft.Field):
     def __init__(self):
         super().__init__("Verification or Validation Results")
-    # def _validation_specific_to_this_field(self) -> List[ValidationResult]:
-    #     return []
+
+    def validate(self):
+        self._val_results = [
+            OutputHeader(self.get_name()),  # Start with header
+            val.val_column_exist(self.field_found()),
+            val.val_column_sort(self),
+        ]
 
 
 @Fields.collect_field()
@@ -211,8 +232,13 @@ class Devices(ft.Field):
     def __init__(self):
         super().__init__("Devices")
 
-    def _validation_specific_to_this_field(self) -> List[ValidationResult]:
-        return [val.val_cells_not_empty(self._body)]
+    def validate(self):
+        self._val_results = [
+            OutputHeader(self.get_name()),  # Start with header
+            val.val_column_exist(self.field_found()),
+            val.val_column_sort(self),
+            val.val_cells_not_empty(self.body),
+        ]
 
 
 @Fields.collect_field()
@@ -220,8 +246,13 @@ class DOFeatures(ft.Field):
     def __init__(self):
         super().__init__("Design Output Feature (with CTQ ID #)")
 
-    def _validation_specific_to_this_field(self) -> List[ValidationResult]:
-        return []
+    def validate(self):
+        self._val_results = [
+            OutputHeader(self.get_name()),  # Start with header
+            val.val_column_exist(self.field_found()),
+            val.val_column_sort(self),
+            val.val_cells_not_empty(self.body),
+        ]
 
 
 @Fields.collect_field()
@@ -229,12 +260,18 @@ class CTQ(ft.Field):
     def __init__(self):
         super().__init__("CTQ? Yes, No, N/A")
 
-    def _validation_specific_to_this_field(self) -> List[ValidationResult]:
-        return []
-
-
+    def validate(self):
+        self._val_results = [
+            OutputHeader(self.get_name()),  # Start with header
+            val.val_column_exist(self.field_found()),
+            val.val_column_sort(self),
+            val.val_cells_not_empty(self.body),
+        ]
 
 
 if __name__ == "__main__":
-    for field in Fields.get_field_classes():
-        print(field)
+    num = 2
+    # num = list(range(5))
+    if not isinstance(num, collections.abc.Iterable):
+        num = [num]
+    print(2 in num)

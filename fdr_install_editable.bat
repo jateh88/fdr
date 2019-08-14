@@ -1,5 +1,6 @@
-python -m pip uninstall fdr
-python -m pip uninstall rtm
+...
+pipenv uninstall dps-rtm
+pipenv install
 python setup.py sdist bdist_wheel
 python -m pip install -e .
 

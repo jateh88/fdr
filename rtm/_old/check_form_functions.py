@@ -15,7 +15,7 @@ def remove_carriage_returns(value):
     return value
 
 # Any
-# check if empty. returns True if empty
+# checks if empty. returns True if empty
 def is_empty(value):
     if not value:
         return True
@@ -24,7 +24,7 @@ def is_empty(value):
 
 
 # Any
-# check if value_at_index is N/A.
+# checks if value_at_index is N/A.
 # FDR rules: type of requirement/other circumstances may/may not allow N/A in certain fs
 def is_notapplic(value):
     # remove whitespace for direct string comparison. e.g. 'n / a ' becomes 'n/a'
@@ -37,7 +37,7 @@ def is_notapplic(value):
 
 
 # Any
-# check if value_at_index is explicitly a hyphen
+# checks if value_at_index is explicitly a hyphen
 # FDR rules: if row is a procedure step, all columns besides ID, cascade visualizer, cascade level and requirement
 #   statement should be a hyphen
 def is_hypen(value):
@@ -50,7 +50,7 @@ def is_hypen(value):
 
 
 # Any
-# check if value_at_index is yes
+# checks if value_at_index is yes
 def is_yes(value):
     # remove whitespace for direct string comparison. e.g. 'yes ' becomes 'yes'
     value = value.replace(" ", "")
@@ -61,7 +61,7 @@ def is_yes(value):
 
 
 # Any
-# check if value_at_index is no
+# checks if value_at_index is no
 def is_no(value):
     # remove whitespace for direct string comparison. e.g. 'no ' becomes 'no'
     value = value.replace(" ", "")
@@ -72,7 +72,7 @@ def is_no(value):
 
 
 # Any
-# check if value_at_index contains 'not required' in its text
+# checks if value_at_index contains 'not required' in its text
 # FDR rules: some fs are not required. e.g. validation is not required if requirement is a business need
 def has_not_required(value):
     if value.lower().find("not required") != -1:
@@ -82,7 +82,7 @@ def has_not_required(value):
 
 
 # ID
-# check that value_at_index has a capital P as the first character.
+# checks that value_at_index has a capital P as the first character.
 # FDR rules: recommended ID formatting for procedure steps and procedure based requirements follow a naming convention.
 #   e.g. P010, P020, etc. for procedure steps and P010-020 for procedure based requirements
 def starts_with_p(value):
@@ -93,7 +93,7 @@ def starts_with_p(value):
 
 
 # ID
-# check if value_at_index has integers following the first letter
+# checks if value_at_index has integers following the first letter
 # FDR rules: recommended ID formatting for procedure steps follow a naming convention.
 #   e.g. P010, P020, etc. for procedure steps
 def has_digits_after_first(value):
@@ -101,7 +101,7 @@ def has_digits_after_first(value):
 
 
 # ID
-# check if value_at_index has 3 integers following the first character. First char is omitted
+# checks if value_at_index has 3 integers following the first character. First char is omitted
 # FDR rules: recommended ID formatting for procedure steps follow a naming convention.
 #   e.g. P010, P020, etc. for procedure steps
 def has_three_digits(value):
@@ -113,7 +113,7 @@ def has_three_digits(value):
 
 
 # ID
-# check if value_at_index has 6 integers following the first character.
+# checks if value_at_index has 6 integers following the first character.
 # FDR rules: recommended ID formatting for procedure based requirements follow a naming convention.
 #   e.g. P010-020, P010-030, etc. for procedure based requirements
 # NOTE: First char is omitted. Assumes there is a dash and removes it
@@ -131,7 +131,7 @@ def has_six_digits(value):
 
 
 # ID
-# check for hyphen within string
+# checks for hyphen within string
 # FDR rules: recommended ID formatting for procedure based requirements follow a naming convention.
 # e.g. P010-020, P010-030, etc. for procedure based requirements
 def has_hyphen(value):
@@ -153,7 +153,7 @@ def has_hyphen_positioned(value):
 
 
 # Cascade Block
-# check for capital X
+# checks for capital X
 # FDR rules: only a capital X or capital F are allowed in the cascade visualizer columns. (B-G in its current form)
 # TODO Question: "has" implies there are allowed to be other chars in the string as well.
 # TODO I forget how, but there's a better way of removing that whitespace. Strip, maybe?
@@ -167,7 +167,7 @@ def has_capital_x(value):
 
 
 # Cascade Block
-# check for lowercase x
+# checks for lowercase x
 # FDR rules: only a capital X or capital F are allowed in the cascade visualizer columns. (B-G in its current form)
 def has_lower_x(value):
     # remove whitespace for direct string comparison. e.g. ' x ' becomes 'x'
@@ -179,7 +179,7 @@ def has_lower_x(value):
 
 
 # Cascade Block
-# check for capital F
+# checks for capital F
 # FDR rules: only a capital X or capital F are allowed in the cascade visualizer columns. (B-G in its current form)
 def has_capital_f(value):
     # remove whitespace for direct string comparison. e.g. ' F ' becomes 'F'
@@ -191,7 +191,7 @@ def has_capital_f(value):
 
 
 # Cascade Block
-# check for lowercase f
+# checks for lowercase f
 # FDR rules: only a capital X or capital F are allowed in the cascade visualizer columns. (B-G in its current form)
 def has_lower_f(value):
     # remove whitespace for direct string comparison. e.g. ' f ' becomes 'f'
@@ -203,7 +203,7 @@ def has_lower_f(value):
 
 
 # Cascade level
-# check if cascade level is 'procedure step'
+# checks if cascade level is 'procedure step'
 # FDR rules: cascade level defines the type of requirement and can only contain one of the following strings:
 # procedure step, user need, risk need, business need, design input or design output
 def is_procedure_step(value):
@@ -215,7 +215,7 @@ def is_procedure_step(value):
 
 
 # Cascade Level
-# check if cascade level is 'user need'
+# checks if cascade level is 'user need'
 # FDR rules: cascade level defines the type of requirement and can only contain one of the following strings:
 # procedure step, user need, risk need, business need, design input or design output
 def is_user_need(value):
@@ -227,7 +227,7 @@ def is_user_need(value):
 
 
 # Cascade Level
-# check if cascade level is 'risk need'
+# checks if cascade level is 'risk need'
 # FDR rules: cascade level defines the type of requirement and can only contain one of the following strings:
 # procedure step, user need, risk need, business need, design input or design output
 def is_risk_need(value):
@@ -239,7 +239,7 @@ def is_risk_need(value):
 
 
 # Cascade Level
-# check if cascade level is 'business need'
+# checks if cascade level is 'business need'
 # FDR rules: cascade level defines the type of requirement and can only contain one of the following strings:
 # procedure step, user need, risk need, business need, design input or design output
 def is_business_need(value):
@@ -251,7 +251,7 @@ def is_business_need(value):
 
 
 # Cascade Level
-# check if cascade level is 'design input'
+# checks if cascade level is 'design input'
 # FDR rules: cascade level defines the type of requirement and can only contain one of the following strings:
 # procedure step, user need, risk need, business need, design input or design output
 def is_design_input(value):
@@ -263,7 +263,7 @@ def is_design_input(value):
 
 
 # Cascade Level
-# check if cascade level is 'design output solution'
+# checks if cascade level is 'design output solution'
 # FDR rules: cascade level defines the type of requirement and can only contain one of the following strings:
 # procedure step, user need, risk need, business need, design input or design output
 def is_design_output(value):
@@ -275,7 +275,7 @@ def is_design_output(value):
 
 
 # Cascade level
-# check if cascade level is one of the approved options.
+# checks if cascade level is one of the approved options.
 # returns true if it is procedure step, user need, risk need, business need, design input or design output
 # FDR rules: cascade level may only be one of the 6 defined types.
 def is_cascade_lvl_approved(value):
@@ -291,7 +291,7 @@ def is_cascade_lvl_approved(value):
 
 
 # V&V Results
-# check if W/C,wc or windchill is present. should indicate if windchill number is present
+# checks if W/C,wc or windchill is present. should indicate if windchill number is present
 # FDR rules: Design inputs and outputs may reference a document in windchill for its verification/validation results
 def has_w_slash_c(value):
     # convert input argument to all lower case for comparison
@@ -307,7 +307,7 @@ def has_w_slash_c(value):
 
 
 # V&V
-# check if 10 digit windchill number is present. example W/C# 0000006634
+# checks if 10 digit windchill number is present. example W/C# 0000006634
 def is_windchill_number_present(value):
     # remove all spaces
     value = value.replace(" ", "")
@@ -326,7 +326,7 @@ def is_windchill_number_present(value):
 
 
 # Design Output Feature
-# check for CTQ IDs. returns true if "CTQ" is present in the cell
+# checks for CTQ IDs. returns true if "CTQ" is present in the cell
 # FDR rules: CTQ (critical to quality) features should be called out in the Design Output features column.
 # CTQs should be called out using the following format: (CTQ08)
 def has_ctq_id(value):
@@ -337,7 +337,7 @@ def has_ctq_id(value):
 
 
 # Design Output Features
-# check for CTQ number after CTQ tag. returns true if all occurrences of CTQ are followed by two set_and_get_funcs
+# checks for CTQ number after CTQ tag. returns true if all occurrences of CTQ are followed by two set_and_get_funcs
 # returns false if no CTQs are present OR they are not followed by two set_and_get_funcs. (this should be used in conjunction
 # with the previous function that looks for CTQ in the cell to eliminate possibility of the former case)
 # FDR rules: CTQ (critical to quality) features should be called out in the Design Output features column.

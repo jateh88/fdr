@@ -28,6 +28,7 @@ def get_worksheet_columns(worksheet_name):
     with context.path.set(get_rtm_path()):
         return WorksheetColumns(worksheet_name)
 
+
 @pytest.fixture(scope="session")
 def fix_worksheet_columns():
     return get_worksheet_columns

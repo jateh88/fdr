@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a0069f4600d0ba8e71a03972a18c720ff43a1b0cef68e306cb9c0e05e13c308f"
+            "sha256": "7df6620f7b46820d969a4441a3f71d6076624e608914593f5f810a55123c6569"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -32,10 +32,10 @@
         },
         "dps-rtm": {
             "hashes": [
-                "sha256:1589c12a25cd01114f9f14e54ec89639c8d46ddbe99c12eb754f4876f7f1151f"
+                "sha256:30e14c86bb58949dc40d1d301c8c98c69123ba1059878f35373c16f9a10da8fe"
             ],
-            "path": "./dist/dps_rtm-0.1.14-py3-none-any.whl",
-            "version": "==0.1.14"
+            "path": "./dist/dps_rtm-0.1.15-py3-none-any.whl",
+            "version": "==0.1.15"
         },
         "et-xmlfile": {
             "hashes": [
@@ -52,9 +52,9 @@
         },
         "openpyxl": {
             "hashes": [
-                "sha256:1d2af392cef8c8227bd2ac3ebe3a28b25aba74fd4fa473ce106065f0b73bfe2e"
+                "sha256:72d1ed243972cad0b3c236230083cac00d9c72804e64a2ae93d7901aec1a8f1c"
             ],
-            "version": "==2.6.2"
+            "version": "==2.6.3"
         }
     },
     "develop": {}

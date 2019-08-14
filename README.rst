@@ -79,10 +79,9 @@ Cascade Block
 
 Cascade Level
 '''''''''''''
-- not empty
-- validated input list
-- matches selection in Cascade Block (WorkItemObject)
-- is "procedure step", "voc user need", "busniess need", "risk need", "design input" or "design output"
+- NOT EMPTY (done!)
+- VALID ENTRIES: is "procedure step", "voc user need", "busniess need", "risk need", "design input", or "design output solution" (done!)
+- MATCHING LEVEL: matches selection in Cascade Block (done!)
 
 Requirement Statement
 '''''''''''''''''''''
@@ -95,19 +94,19 @@ Requirement Statement
 
 Requirement Rationale
 '''''''''''''''''''''
-- not empty
+- not empty (done)
 
 VorV Strategy
 '''''''''''''
-- not empty
-- if "business need", strategy is not required. all others require a strategy
+- not empty (done)
+- if "business need", strategy is not required. Use N/A (is this true?)
 
 VorV Results
 ''''''''''''
 - not empty
-- if "business need", results are not required. all others require results
+- if "business need", results are not required. all others require results (Use 'N/A' in this cell?)
 - if windchill number is present, check its formatting. (10 digits)
-- print report of applicable documents? 
+- print report of applicable documents? (?)
 
 Devices
 '''''''

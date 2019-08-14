@@ -5,7 +5,7 @@ import rtm.validate.checks as ch
 
 def test_cell_empty():
     """checks.cell_empty is tested indirectly via test_validation.test_cells_not_empty
-    No need to check it again here.
+    No need to checks it again here.
     """
     pass
 
