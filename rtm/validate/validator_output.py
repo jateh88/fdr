@@ -1,7 +1,5 @@
-"""
-Instances of these classes contain a single row of validation information,
-ready to be printed to the terminal at the conclusion of the app.
-"""
+"""Instances of these classes contain a single row of validation information,
+ready to be printed to the terminal at the conclusion of the app."""
 
 # --- Standard Library Imports ------------------------------------------------
 import abc
@@ -23,6 +21,8 @@ class ValidatorOutput(metaclass=abc.ABCMeta):
 
 def pretty_int_list(numbers) -> str:
     def as_range(iterable):
+        """Convert list of integers to an easy-to-read string. Used to display the
+    on the console the rows that failed validation."""
         list_int = list(iterable)
         if len(list_int) > 1:
             return f'{list_int[0]}-{list_int[-1]}'
@@ -33,6 +33,8 @@ def pretty_int_list(numbers) -> str:
 
 
 class ValidationResult(ValidatorOutput):
+    """Each validation function returns an instance of this class. Calling its
+    print() function prints a standardized output to the console."""
     def __init__(self, score, title, explanation=None, nonconforming_indices=None):
         self._scores_and_colors = {'Pass': 'green', 'Warning': 'yellow', 'Error': 'red'}
         self.score = score
@@ -82,6 +84,7 @@ class ValidationResult(ValidatorOutput):
 
 
 class OutputHeader(ValidatorOutput):
+    """Given a field name, print a standardized header on the console."""
 
     def __init__(self, header_name):
         self.field_name = header_name
@@ -97,16 +100,5 @@ class OutputHeader(ValidatorOutput):
         click.echo()
 
 
-def example_val_results() -> List[ValidationResult]:
-    explanation = 'This is an example explanation'
-    examples = [
-        ValidationResult('Pass', 'Pass Example', explanation),
-        ValidationResult('Warning', 'Warning Example', explanation),
-        ValidationResult('Error', 'Error Example', explanation),
-    ]
-    return examples
-
-
 if __name__ == '__main__':
-    list_ = [1,2,3,5,8,10,11]
-    print(pretty_int_list(list_))
+    pass

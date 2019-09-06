@@ -1,3 +1,6 @@
+"""Custom exceptions mostly for handling validation errors (e.g. missing
+worksheet or columns)."""
+
 # --- Standard Library Imports ------------------------------------------------
 # None
 
@@ -24,8 +27,4 @@ class RTMValidatorFileError(RTMValidatorError):
 
 
 class UninitializedError(Exception):
-    pass
-
-
-class Uninitialized(RTMValidatorError):
     pass

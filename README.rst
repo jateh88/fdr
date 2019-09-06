@@ -1,32 +1,14 @@
-===========
-fdr
-===========
-
-
-.. image:: https://img.shields.io/pypi/v/fdr.svg
-        :target: https://pypi.python.org/pypi/fdr
-
-.. image:: https://img.shields.io/travis/jonathanchukinas/fdr.svg
-        :target: https://travis-ci.org/jonathanchukinas/fdr
-
-.. image:: https://readthedocs.org/projects/fdr/badge/?version=latest
-        :target: https://fdr.readthedocs.io/en/latest/?badge=latest
-        :alt: Documentation Status
-
-
-
+=========================================
+Requirements Trace Matrix (RTM) Validator
+=========================================
 
 Validate a Function & Design Requirements document.
 
-* Free software: MIT license
-* Documentation: https://fdr.readthedocs.io.
+Free software: MIT license
 
-
-Quick Start
-------------
 
 J&J Quick Start
-''''''''''''''''''''''
+---------------
 1. **Install Python**
     a. Navigate to J&J App Store. You may need to use Internet Explorer. Users have had difficulty with Chrome.
     #. Search ``Python``. You should see something similar to ``Python 3.6``. Add it to cart and install.
@@ -86,11 +68,11 @@ Cascade Level
 Requirement Statement
 '''''''''''''''''''''
 - Not empty (WorkItemObject)
-- CHILD - valid pointer (CascadeObject)
+- CHILD - valid pointer
 - ADDITIONALPARENT 
 - valid pointer (CascadeObject)
-- check for ______ hashtags e.g. #Function, #MatingParts (WorkItemObject)
-- report on extra tags found? (WorkItemObject)
+- check for ______ hashtags e.g. #Function, #MatingParts
+- report on extra tags found?
 
 Requirement Rationale
 '''''''''''''''''''''
@@ -132,3 +114,55 @@ Other
 '''''
 - 'N/A' check? (WorkItemObject)
 - " - " check
+
+Developer Notes
+---------------
+How It Works
+''''''''''''''
+The Requirements Trace Matrix (RTM) documents the requirements cascade for an New Product Development (NPD) project.
+Broad core requirements flow into multiple subrequirements, which themselves spawn yet more subrequirements, and so on.
+Each (sub)requirement can have multiple parents, though most have only one.
+Each of these (sub)requirements is called a **work item**.
+
+Expressed in terms of `Graph Theory <https://en.wikipedia.org/wiki/Graph_theory>`_,
+the RTM is a collection of one or more directed, acyclic graphs.
+Each graph node is represented as a single row in the RTM Excel worksheet.
+Each node has multiple fields, represented by worksheet columns.
+The graph edges are represented by the worksheet's Cascade Block. To find a node's primary parent,
+find the last '**X**' in the previous column of the Cascade Block.
+All other parents are called out with tags in the **Requirements Statement** field.
+
+The RTM Validator works by first reading all rows of each field into an object.
+Then each work item (node) is read into its own object.
+Finally, validation functions are called, field by field.
+The output (pass/warning/fail) is displayed on the console.
+
+
+Release History
+---------------
+
+v 0.1.1
+''''''''''
+* Initial PyPI upload
+
+v 0.1.2
+''''''''''
+* added README
+
+v 0.1.3|4|5
+''''''''''''
+* implement tkinter
+
+v 0.1.6
+''''''''''
+* implement click cli
+
+...
+
+v 0.1.16
+''''''''''''
+* add Cascade Block validation
+
+v 0.1.17
+''''''''''''
+* add Cascade Level validation

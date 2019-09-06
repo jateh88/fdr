@@ -17,7 +17,7 @@ def test_work_items(fix_worksheet_columns):
     with context.worksheet_columns.set(ws_cols):
         fields = rtm.containers.fields.Fields()
     # position_should = list(ws_cols.get_first('position').body)
-    parents_should = list(ws_cols.get_first('parent').body)
+    parents_should = list(ws_cols.get_first('parent').values)
 
     # --- Initializes work items ----------------------------------------------
     with context.fields.set(fields):
@@ -34,4 +34,4 @@ def test_work_items(fix_worksheet_columns):
 
 def test_work_item_index_count(fix_fields):
     fields = fix_fields("cascade")
-    assert fields.body_length == 25
+    assert fields.height == 25

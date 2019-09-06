@@ -1,13 +1,20 @@
+"""This module focuses on getting and validating the path for the RTM
+worksheet."""
+
+# --- Standard Library Imports ------------------------------------------------
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog
 
+# --- Third Party Imports -----------------------------------------------------
 import click
 
+# --- Intra-Package Imports ---------------------------------------------------
 from rtm.main import exceptions as exc
 
 
 def get_rtm_path(path_option='default') -> Path:
+    """Prompt user for RTM workbook location. Return path object."""
     if path_option == 'default':
         path = get_new_path_from_dialog()
         required_extensions = '.xlsx .xls'.split()
@@ -25,6 +32,7 @@ def get_rtm_path(path_option='default') -> Path:
 
 
 def get_new_path_from_dialog() -> Path:
+    """Provide user with dialog box so they can select the RTM Workbook"""
     root = tk.Tk()
     root.withdraw()
     path = Path(filedialog.askopenfilename())

@@ -1,20 +1,17 @@
-"""
-Whereas the validation functions return results that will be outputted by the RTM Validator,
-these "checks" functions perform smaller tasks, like checking individual cells.
-"""
+"""Whereas the validation functions return results that will be outputted by
+the RTM Validator, these "checks" functions perform smaller tasks, like
+checking individual cells."""
 
 # --- Standard Library Imports ------------------------------------------------
-from typing import Optional
 
 # --- Third Party Imports -----------------------------------------------------
 # None
 
 # --- Intra-Package Imports ---------------------------------------------------
-import rtm.main.context_managers as context
 
 
 def cell_empty(value) -> bool:
-    # If the cell contained True or False, then clearly it wasn't empty. Return False
+    """Checks if a cell is empty. Cells contain True or False return False"""
     if isinstance(value, bool):
         return False
     if not value:
@@ -22,31 +19,18 @@ def cell_empty(value) -> bool:
     return False
 
 
-def get_expected_field_left(field):
-    """Return the field object that *should* come before the argument field object."""
-    initialized_fields = context.fields.get()
-    index_prev_field = None
-    for index, field_current in enumerate(initialized_fields):
-        if field is field_current:
-            index_prev_field = index - 1
-            break
-    if index_prev_field is None:
-        raise ValueError
-    elif index_prev_field == -1:
-        return None
-    else:
-        return initialized_fields[index_prev_field]
-
-
-def dict_contains_only_acceptable_entries(dictionary, acceptible_entries):
-    if len(dictionary) == 0:
+def values_in_acceptable_entries(sequence, allowed_values):
+    """Each value in the sequence must be an allowed values. Otherwise, False."""
+    if len(sequence) == 0:
         return True
-    for value in dictionary.values():
-        if value not in acceptible_entries:
+    for item in sequence:
+        if item not in allowed_values:
             return False
     return True
 
 
+# I would like to have included this variable in the CascadeLevel, but that
+# would cause circular references.
 allowed_cascade_levels = {  # keys: level, values: position
         'PROCEDURE STEP': [0],
         'VOC USER NEED': [1],

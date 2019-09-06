@@ -57,15 +57,15 @@ def test_cells_not_empty():
 @pytest.mark.skip("This is not a standalone test func. It gets passed as a parameter further down.")
 def test_cascade_level_not_empty():
     fields = context.fields.get()
-    cascade_field = fields.get_matching_field('CascadeLevel')
-    results = val.val_cells_not_empty(cascade_field.body)
+    cascade_field = fields.get_field_object('CascadeLevel')
+    results = val.val_cells_not_empty(cascade_field.values)
     return results
 
 
 @pytest.mark.skip("This is not a standalone test func. It gets passed as a parameter further down.")
 def test_valid_cascade_levels():
     fields = context.fields.get()
-    cascade_field = fields.get_matching_field('CascadeLevel')
+    cascade_field = fields.get_field_object('CascadeLevel')
     results = val.valid_cascade_levels(cascade_field)
     return results
 
@@ -95,7 +95,7 @@ def test_rtm_xlsx_cascade(fix_worksheet_columns, cascade_validation: CascadeVali
     col_with_expected_results = cascade_validation.header
     indices_expected_to_fail = [
         index
-        for index, value in enumerate(ws_cols.get_first(col_with_expected_results).body)
+        for index, value in enumerate(ws_cols.get_first(col_with_expected_results).values)
         if not value
     ]
 

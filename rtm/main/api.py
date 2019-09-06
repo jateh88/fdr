@@ -1,3 +1,7 @@
+"""The main() function here defines the structure of the RTM Validation
+process. It calls the main steps in order and handles exceptions directly
+related to validation errors (e.g. missing columns)"""
+
 # --- Standard Library Imports ------------------------------------------------
 # None
 
@@ -5,7 +9,6 @@
 import click
 
 # --- Intra-Package Imports ---------------------------------------------------
-# TODO consolidate imports
 from rtm.main.excel import get_rtm_path
 from rtm.main.exceptions import RTMValidatorError
 from rtm.containers.fields import Fields
@@ -15,6 +18,7 @@ import rtm.main.context_managers as context
 
 
 def main():
+    """This is the main function."""
 
     click.clear()
     click.echo(
