@@ -3,15 +3,13 @@ and the work items class, a custom sequence contains all work items."""
 
 # --- Standard Library Imports ------------------------------------------------
 import collections
-from typing import List
+import functools
 
 # --- Third Party Imports -----------------------------------------------------
 # None
 
 # --- Intra-Package Imports ---------------------------------------------------
-from rtm.containers.fields import CascadeBlock
 import rtm.main.context_managers as context
-from rtm.main.exceptions import UninitializedError
 from rtm.validate.checks import cell_empty
 
 
@@ -24,48 +22,49 @@ class WorkItem:
         """A work item is basically a row in the RTM worksheet. It's an item
         that likely a parent and at least one child."""
         self.index = index  # work item's vertical position relative to other work items
-        self.cascade_block = []
-        self.parent = UninitializedError()  # The index (integer) of the parent. Or None if no parent.
 
     @property
-    def has_parent(self):
-        """If false, is either because or error or it is a root item"""
-        if self.parent is None:
-            return False
-        elif self.parent >= 0:
-            return True
-        else:
-            return False
+    @functools.lru_cache()
+    def cascade_block_row(self):
+        """Return list of tuples (depth, cell_value)"""
+        cascade_block = context.fields.get().get_field_object('CascadeBlock')
+        cascade_block_row_cells = cascade_block.get_row(self.index)
+        return [
+            CascadeBlockCell(depth, value)
+            for depth, value in enumerate(cascade_block_row_cells)
+            if not cell_empty(value)
+        ]
 
     @property
     def depth(self):
         """Depth is equivalent to the number of edges from this work item to a root work item."""
         try:
-            return self.cascade_block[0].depth
+            return self.cascade_block_row[0].depth
         except IndexError:
             return None
 
-    def set_cascade_block_row(self, cascade_block_row: list):
-        """Save non-empty cascade block cell values"""
-        for depth, value in enumerate(cascade_block_row):
-            if not cell_empty(value):
-                self.cascade_block.append(CascadeBlockCell(depth, value))
+    @property
+    def is_root(self):
+        """Is this work item a Procedure Step?"""
+        # TODO covered by test?
+        return True if self.depth == 0 else False
 
-    def find_parent(self, work_items):
-        """Find parent. """
+    @property
+    @functools.lru_cache()
+    def parent(self):
+        # TODO rename to parent
+        """Return parent work item"""
 
-        # set default
-        self.parent = None
-
+        # If no position (cascade block row was blank), then no parent
         if self.depth is None:
-            # If no position (row was blank), then no parent
-            return
-        elif self.depth == 0:
-            # If in first position, then it's the trunk of a tree!
-            self.parent = -1
-            return
+            return MissingWorkItem(self)
 
-        # Search back through previous work items
+        # If root item (e.g. procedure step), then no parent!
+        if self.is_root:
+            return MissingWorkItem(self)
+
+        # Search backwards through previous work items
+        work_items = context.work_items.get()
         for index in reversed(range(self.index)):
 
             other = work_items[index]
@@ -75,40 +74,67 @@ class WorkItem:
                 continue
             elif other.depth == self.depth:
                 # same position, same parent
-                self.parent = other.parent
-                return
+                return other.parent
             elif other.depth == self.depth - 1:
                 # one column to the left; that work item IS the parent
-                self.parent = other.index
-                return
+                return other
             elif other.depth < self.depth - 1:
                 # cur_work_item is too far to the left. There's a gap in the chain. No parent
-                return
+                return MissingWorkItem(self)
             else:
                 # self.position < other.position
                 # Skip work items that come later in the cascade. Keep looking.
                 continue
+
+        # We should never get to this point. I was going to return a
+        # MissingWorkItem at this point, but I'd rather an exception get thrown
+        # and have to fix it.
+
+    @property
+    @functools.lru_cache()
+    def root(self):
+        """Return this work item's root item. The 'root' is the parent of the
+        parent of the parent...etc. i.e. the Procedure Step"""
+        if self.is_root:
+            return self
+        return self.parent.root
+
+    def __repr__(self):
+        return f"<d: {self.depth}, is_root: {self.is_root}, p: {self.parent.index}, r: {self.root.index}>"
+
+
+class MissingWorkItem(WorkItem):
+
+    def __init__(self, creator):
+        super().__init__(-1)  # index = -1 (error)
+        self.creator = creator
+
+    @property
+    def cascade_block_row(self):
+        return []
+
+    @property
+    def depth(self):
+        return None
+
+    @property
+    def is_root(self):
+        return False
+
+    @property
+    def parent(self):
+        return self
+
+    @property
+    def root(self):
+        return self
 
 
 class WorkItems(collections.abc.Sequence):
 
     def __init__(self):
         """Sequence of work items"""
-
-        # --- Get Cascade Block -----------------------------------------------
-        fields = context.fields.get()
-        cascade_block = fields.get_field_object(CascadeBlock)
-
-        # --- Initialize Work Items -------------------------------------------
-        self._work_items = [WorkItem(index) for index in range(fields.height)]
-        for work_item in self:
-            row_data = self.get_row(cascade_block.values, work_item.index)
-            work_item.set_cascade_block_row(row_data)
-            work_item.find_parent(self._work_items)
-
-    @staticmethod
-    def get_row(columns: List[list], index: int) -> list:
-        return [col[index] for col in columns]
+        self._work_items = [WorkItem(index) for index in range(context.fields.get().height)]
 
     # --- Sequence ------------------------------------------------------------
     def __getitem__(self, item) -> WorkItem:
@@ -120,3 +146,13 @@ class WorkItems(collections.abc.Sequence):
 
 if __name__ == "__main__":
     pass
+    # class TestThingee:
+    #     def __init__(self):
+    #         self.stuff = 1
+    #
+    #     @property
+    #     def stuff(self):
+    #         return 2
+    #
+    # thingee = TestThingee()
+    # print(thingee.stuff)

@@ -4,6 +4,7 @@ the RTM worksheet."""
 
 # --- Standard Library Imports ------------------------------------------------
 import collections
+import functools
 
 # --- Third Party Imports -----------------------------------------------------
 # None
@@ -41,12 +42,11 @@ class Fields(collections.abc.Sequence):
     def get_field_object(self, field_class):
         """Given a field class or name of field class, return the matching
         field object"""
-        if isinstance(field_class, str):
-            for _field in self:
+        for _field in self:
+            if isinstance(field_class, str):
                 if _field.__class__.__name__ == field_class:
                     return _field
-        else:
-            for _field in self:
+            else:
                 if isinstance(_field, field_class):
                     return _field
         raise ValueError(f'{field_class} not found in {self.__class__}')
@@ -80,11 +80,21 @@ class ID(ft.Field):
 
     def validate(self):
         """Validate this field"""
+        work_items = context.work_items.get()
         self._val_results = [
             OutputHeader(self.name),
             val.val_column_exist(self.found),
-            val.val_column_sort(self),
         ]
+        if self.found:
+            self._val_results += [
+                val.val_column_sort(self),
+                # No need for explicit "not empty" check b/c this is caught by pxxx
+                #   format and val_match_parent_prefix.
+                val.val_unique_values(self.values),
+                val.val_alphabetical_sort(self.values),
+                val.val_root_id_format(self.values, work_items),
+                val.val_nonroot_ids_start_w_root_id(),
+            ]
 
 
 @Fields.collect_field()
@@ -100,6 +110,7 @@ class CascadeBlock(ft.Field):
             if subfield.found:
                 self._subfields.append(subfield)
             else:
+                self.last_field_not_found = subfield_name
                 break
 
     @staticmethod
@@ -107,9 +118,9 @@ class CascadeBlock(ft.Field):
         """Return list of column headers. The first several are required. The
         last dozen or so are unlikely to be found on the RTM. This is because
         the user is allowed as many Design Output Solutions as they need."""
-        field_names = ["Procedure Step", "User Need", "Design Input"]
+        field_names = ["Procedure Step", "Need", "Design Input"]
         for i in range(1, 20):
-            field_names.append("DO Solution L" + str(i))
+            field_names.append(f"Solution Level {str(i)}")
         return field_names
 
     @property
@@ -132,7 +143,7 @@ class CascadeBlock(ft.Field):
         if self.found:
             return self[0].position_left
         else:
-            return None
+            return -1
 
     @property
     def position_right(self):
@@ -140,19 +151,27 @@ class CascadeBlock(ft.Field):
         if self.found:
             return self[-1].position_left
         else:
-            return None
+            return -1
+
+    # @functools.lru_cache()
+    # TODO how often does get_row get used? If more than once, add lru cache back in?
+    def get_row(self, index) -> list:
+        return [col[index] for col in self.values]
 
     def validate(self):
         """Validate this field"""
         self._val_results = [
             OutputHeader(self.name),  # Start with header
             val.val_column_exist(self.found),
-            val.val_column_sort(self),
-            val.val_cascade_block_not_empty(),
-            val.val_cascade_block_only_one_entry(),
-            val.val_cascade_block_x_or_f(),
-            val.val_cascade_block_use_all_columns(),
         ]
+        if self.found:
+            self._val_results += [
+                val.val_column_sort(self),
+                val.val_cascade_block_not_empty(),
+                val.val_cascade_block_only_one_entry(),
+                val.val_cascade_block_x_or_f(),
+                val.val_cascade_block_use_all_columns(),
+            ]
 
     # --- Sequence ------------------------------------------------------------
     def __len__(self):
@@ -176,11 +195,14 @@ class CascadeLevel(ft.Field):
         self._val_results = [
             OutputHeader(self.name),
             val.val_column_exist(self.found),
-            val.val_column_sort(self),
-            val.val_cells_not_empty(self.values),
-            val.valid_cascade_levels(self),
-            val.val_matching_cascade_levels(),
         ]
+        if self.found:
+            self._val_results += [
+                val.val_column_sort(self),
+                val.val_cells_not_empty(self.values),
+                val.valid_cascade_levels(self),
+                val.val_matching_cascade_levels(),
+            ]
 
 
 @Fields.collect_field()
@@ -197,8 +219,11 @@ class ReqStatement(ft.Field):
         self._val_results = [
             OutputHeader(self.name),
             val.val_column_exist(self.found),
-            val.val_column_sort(self),
         ]
+        if self.found:
+            self._val_results += [
+                val.val_column_sort(self),
+            ]
 
 
 @Fields.collect_field()
@@ -213,9 +238,12 @@ class ReqRationale(ft.Field):
         self._val_results = [
             OutputHeader(self.name),
             val.val_column_exist(self.found),
-            val.val_column_sort(self),
-            val.val_cells_not_empty(self.values),
         ]
+        if self.found:
+            self._val_results += [
+                val.val_column_sort(self),
+                val.val_cells_not_empty(self.values),
+            ]
 
 
 @Fields.collect_field()
@@ -230,9 +258,12 @@ class VVStrategy(ft.Field):
         self._val_results = [
             OutputHeader(self.name),
             val.val_column_exist(self.found),
-            val.val_column_sort(self),
-            val.val_cells_not_empty(self.values)
         ]
+        if self.found:
+            self._val_results += [
+                val.val_column_sort(self),
+                val.val_cells_not_empty(self.values)
+            ]
 
 
 @Fields.collect_field()
@@ -247,8 +278,11 @@ class VVResults(ft.Field):
         self._val_results = [
             OutputHeader(self.name),  # Start with header
             val.val_column_exist(self.found),
-            val.val_column_sort(self),
         ]
+        if self.found:
+            self._val_results += [
+                val.val_column_sort(self),
+            ]
 
 
 @Fields.collect_field()
@@ -263,9 +297,12 @@ class Devices(ft.Field):
         self._val_results = [
             OutputHeader(self.name),  # Start with header
             val.val_column_exist(self.found),
-            val.val_column_sort(self),
-            val.val_cells_not_empty(self.body),
         ]
+        if self.found:
+            self._val_results += [
+                val.val_column_sort(self),
+                val.val_cells_not_empty(self.values),
+            ]
 
 
 @Fields.collect_field()
@@ -280,9 +317,12 @@ class DOFeatures(ft.Field):
         self._val_results = [
             OutputHeader(self.name),  # Start with header
             val.val_column_exist(self.found),
-            val.val_column_sort(self),
-            val.val_cells_not_empty(self.body),
         ]
+        if self.found:
+            self._val_results += [
+                val.val_column_sort(self),
+                val.val_cells_not_empty(self.values),
+            ]
 
 
 @Fields.collect_field()
@@ -297,9 +337,12 @@ class CTQ(ft.Field):
         self._val_results = [
             OutputHeader(self.name),  # Start with header
             val.val_column_exist(self.found),
-            val.val_column_sort(self),
-            val.val_cells_not_empty(self.body),
         ]
+        if self.found:
+            self._val_results += [
+                val.val_column_sort(self),
+                val.val_cells_not_empty(self.values),
+            ]
 
 
 def get_expected_field_left(field):

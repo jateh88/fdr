@@ -15,10 +15,12 @@ from rtm.containers.fields import Fields
 from rtm.containers.work_items import WorkItems
 
 
+# --- General Purpose Validation ----------------------------------------------
+
 def test_column_exist(capsys):
     io = [
         (True, f"\tPass\tFIELD EXIST\n"),
-        (False, f"\tError\tFIELD EXIST - Field not found\n"),
+        (False, f"\tError\tFIELD EXIST - Field not found. Make sure your headers exactly match the title shown above.\n"),
     ]
     for item in io:
         result = val.val_column_exist(item[0])
@@ -54,16 +56,70 @@ def test_cells_not_empty():
     assert results.indices == failing_indices
 
 
-@pytest.mark.skip("This is not a standalone test func. It gets passed as a parameter further down.")
-def test_cascade_level_not_empty():
+# --- ID ----------------------------------------------------------------------
+
+def test_root_id_format():
+
+    SetupRootID = namedtuple('SetupRootID', 'is_root value expected_pass')
+    test_set = [
+        SetupRootID(True, 'P123', True),
+        SetupRootID(True, 'P123-', False),
+        SetupRootID(False, 'P123-', True),
+        SetupRootID(False, 'P12fd-', True),
+        SetupRootID(True, 'P13-', False),
+        SetupRootID(True, None, False),
+        SetupRootID(True, False, False),
+        SetupRootID(True, True, False),
+        SetupRootID(True, 123, False),
+    ]
+
+    values = [test_item.value for test_item in test_set]
+    work_items = test_set  # the function only needs the depth attribute
+
+    expected_error_indices = [
+        index
+        for index, test_item in enumerate(test_set)
+        if not test_item.expected_pass
+    ]
+    actual_error_indices = val.val_root_id_format(values, work_items).indices
+
+    assert expected_error_indices == actual_error_indices
+
+
+def test_unique_values():
+    values = 'a g b c d a e f g'.split()
+    expected_error_indices = [5, 8]
+    assert expected_error_indices == val.val_unique_values(values).indices
+
+
+def test_alphabetical_sort():
+    test_sets = [
+        (['a', 'b', 'c'], []),
+        (['b', 'a', 'c'], [1]),
+        (['c', 'b', 'a'], [1, 2]),
+    ]
+
+    for test_set in test_sets:
+        input_sequence = test_set[0]
+        expected_result_indices = test_set[1]
+        assert expected_result_indices == val.val_alphabetical_sort(input_sequence).indices
+
+
+# def test_nonroot_ids_start_w_root_id():
+
+
+
+
+# --- CASCADE BLOCK Setup -----------------------------------------------------
+
+def get_cascade_level_not_empty():
     fields = context.fields.get()
     cascade_field = fields.get_field_object('CascadeLevel')
     results = val.val_cells_not_empty(cascade_field.values)
     return results
 
 
-@pytest.mark.skip("This is not a standalone test func. It gets passed as a parameter further down.")
-def test_valid_cascade_levels():
+def get_valid_cascade_levels():
     fields = context.fields.get()
     cascade_field = fields.get_field_object('CascadeLevel')
     results = val.valid_cascade_levels(cascade_field)
@@ -75,11 +131,14 @@ cascade_validations = [
     CascadeValidation(func=val.val_cascade_block_not_empty, header="not_empty"),
     CascadeValidation(func=val.val_cascade_block_only_one_entry, header="one_entry"),
     CascadeValidation(func=val.val_cascade_block_x_or_f, header="x_or_f"),
-    CascadeValidation(func=test_cascade_level_not_empty, header='cascade_level_not_empty'),
-    CascadeValidation(func=test_valid_cascade_levels, header='cascade_level_valid_input'),
-    CascadeValidation(func=val.val_matching_cascade_levels, header='cascade_level_matching')
+    CascadeValidation(func=get_cascade_level_not_empty, header='cascade_level_not_empty'),
+    CascadeValidation(func=get_valid_cascade_levels, header='cascade_level_valid_input'),
+    CascadeValidation(func=val.val_matching_cascade_levels, header='cascade_level_matching'),
+    CascadeValidation(func=val.val_nonroot_ids_start_w_root_id, header='non_root_ids_start_w_root_id'),
 ]
 
+
+# --- CASCADE BLOCK -----------------------------------------------------------
 
 @pytest.mark.parametrize("cascade_validation", cascade_validations)
 def test_rtm_xlsx_cascade(fix_worksheet_columns, cascade_validation: CascadeValidation):

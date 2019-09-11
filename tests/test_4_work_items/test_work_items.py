@@ -12,24 +12,29 @@ from rtm.containers.work_items import WorkItems
 
 def test_work_items(fix_worksheet_columns):
 
-    # --- Extract data from worksheet -----------------------------------------
+    # --- SETUP ---------------------------------------------------------------
+
+    # Get Worksheet Columns from worksheet:
     ws_cols = fix_worksheet_columns("cascade")
+
+    # Get Fields from Worksheet Columns:
     with context.worksheet_columns.set(ws_cols):
         fields = rtm.containers.fields.Fields()
-    # position_should = list(ws_cols.get_first('position').body)
-    parents_should = list(ws_cols.get_first('parent').values)
 
-    # --- Initializes work items ----------------------------------------------
+    # Get Work Items from Fields:
     with context.fields.set(fields):
         work_items = WorkItems()
 
-    # # --- Check Position ------------------------------------------------------
-    # position_actual = [item.position for item in work_items]
-    # assert position_actual == position_should
+    # --- TEST ----------------------------------------------------------------
 
-    # --- Check Parent --------------------------------------------------------
-    parents_actual = [item.parent for item in work_items]
-    assert parents_actual == parents_should
+    # Expected indices of parent work items:
+    expected_parent_indices = list(ws_cols.get_first('parent').values)
+
+    # Actual indices of parent work items:
+    with context.fields.set(fields), context.work_items.set(work_items):
+        actual_parent_indices = [item.parent.index for item in work_items]
+
+    assert expected_parent_indices == actual_parent_indices
 
 
 def test_work_item_index_count(fix_fields):

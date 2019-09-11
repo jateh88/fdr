@@ -50,11 +50,11 @@ def test_fields_not_found(fix_fields):
 
 
 def test_cascade_block(fix_worksheet_columns):
-    with context.worksheet_columns.set(fix_worksheet_columns("Procedure Based Requirements")):
+    with context.worksheet_columns.set(fix_worksheet_columns("Procedure Based Requirements2")):
         cascade_block = cfields.CascadeBlock()
         assert len(cascade_block) == 6
         assert cascade_block.values == [(1,2,3)]*6
-        assert cascade_block.found == True
+        assert cascade_block.found
         assert cascade_block.position_left < cascade_block.position_right
         assert cascade_block.name == "Cascade Block"
 
@@ -65,7 +65,7 @@ def test_cascade_block_not_found(fix_worksheet_columns):
         cascade_block = cfields.CascadeBlock()
         assert len(cascade_block) == 0
         assert cascade_block.values == []
-        assert cascade_block.found == False
-        assert cascade_block.position_left ==None
-        assert cascade_block.position_right == None
+        assert not cascade_block.found
+        assert cascade_block.position_left == -1
+        assert cascade_block.position_right == -1
         assert cascade_block.name == "Cascade Block"

@@ -35,10 +35,11 @@ General Notes
 
 ID
 ''
-- not empty
-- sorts alphabetically
-- if procedure step, is formatted "P###" e.g. P010 
-- if need, input or output, is formatted "P###-###" where first three digits correlate to procedure step. e.g. P010-010. 
+
+- Each ID must be unique (done!)
+- sorts alphabetically (done!)
+- Procedure Step IDs must be formatted "PXYZ" e.g. "P010" (done!)
+- All other IDs must start with the ID of its root Procedure Step. Example: if a Procedure Step has an ID of "P010", then the following VOC USER NEED could have an ID of "P010-0010". (done!)
 
 Cascade Block
 '''''''''''''
@@ -62,7 +63,7 @@ Cascade Block
 Cascade Level
 '''''''''''''
 - NOT EMPTY (done!)
-- VALID ENTRIES: is "procedure step", "voc user need", "busniess need", "risk need", "design input", or "design output solution" (done!)
+- VALID ENTRIES: is "procedure step", "voc user need", "business need", "risk need", "design input", or "design output solution" (done!)
 - MATCHING LEVEL: matches selection in Cascade Block (done!)
 
 Requirement Statement

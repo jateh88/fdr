@@ -63,7 +63,7 @@ class Field:
         if self.found:
             return self._positions[0]
         else:
-            return None
+            return -1
 
     @property
     def position_right(self):

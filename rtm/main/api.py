@@ -17,7 +17,7 @@ import rtm.containers.work_items as wi
 import rtm.main.context_managers as context
 
 
-def main():
+def main(path=None):
     """This is the main function."""
 
     click.clear()
@@ -27,7 +27,9 @@ def main():
     )
 
     try:
-        with context.path.set(get_rtm_path()):
+        if not path:
+            path = get_rtm_path()
+        with context.path.set(path):
             worksheet_columns = wc.WorksheetColumns("Procedure Based Requirements")
         with context.worksheet_columns.set(worksheet_columns):
             fields = Fields()
