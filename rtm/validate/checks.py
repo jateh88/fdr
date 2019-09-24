@@ -3,13 +3,13 @@ the RTM Validator, these "checks" functions perform smaller tasks, like
 checking individual cells."""
 
 # --- Standard Library Imports ------------------------------------------------
-# None
+import collections
+
 
 # --- Third Party Imports -----------------------------------------------------
 # None
 
 # --- Intra-Package Imports ---------------------------------------------------
-# None
 
 
 def cell_empty(value) -> bool:
@@ -45,6 +45,7 @@ def values_in_acceptable_entries(sequence, allowed_values) -> bool:
     return True
 
 
+
 # I would like to have included this variable in the CascadeLevel, but that
 # would cause circular references.
 allowed_cascade_levels = {  # keys: level, values: position
@@ -56,6 +57,11 @@ allowed_cascade_levels = {  # keys: level, values: position
     'DESIGN INPUT': [2],
     'DESIGN SOLUTION': list(range(3, 20))
 }
+
+
+def numbers():
+    print("Called")
+    return list(range(10))
 
 if __name__ == "__main__":
     pass

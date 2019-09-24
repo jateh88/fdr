@@ -82,4 +82,7 @@ class Field:
 
 
 if __name__ == "__main__":
-    pass
+    a = {1, 2}
+    b = 'a b'.split()
+    b += a
+    print(b)

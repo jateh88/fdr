@@ -18,16 +18,17 @@ from rtm.validate.validator_output import OutputHeader
 
 
 class Fields(collections.abc.Sequence):
-
     # --- Collect field classes -----------------------------------------------
     field_classes = []
 
     @classmethod
     def collect_field(cls):
         """Append a field class to this Fields sequence."""
+
         def decorator(field_):
             cls.field_classes.append(field_)
             return field_
+
         return decorator
 
     # --- Field Object Methods
@@ -83,18 +84,25 @@ class ID(ft.Field):
         work_items = context.work_items.get()
         self._val_results = [
             OutputHeader(self.name),
-            val.val_column_exist(self.found),
+            val.field_exist(self.found),
         ]
         if self.found:
             self._val_results += [
-                val.val_column_sort(self),
+                val.left_right_order(self),
                 # No need for explicit "not empty" check b/c this is caught by pxxx
                 #   format and val_match_parent_prefix.
-                val.val_unique_values(self.values),
-                val.val_alphabetical_sort(self.values),
-                val.val_root_id_format(self.values, work_items),
-                val.val_nonroot_ids_start_w_root_id(),
+                val.unique(self.values),
+                val.alphabetical_sort(self.values),
+                val.procedure_step_format(self.values, work_items),
+                val.start_w_root_id(),
             ]
+
+    def get_index(self, id_value):
+        # TODO Later, improve with a bisect search of a sorted list
+        try:
+            return self.values.index(id_value)
+        except ValueError:
+            return -1
 
 
 @Fields.collect_field()
@@ -161,16 +169,19 @@ class CascadeBlock(ft.Field):
     def validate(self):
         """Validate this field"""
         self._val_results = [
-            OutputHeader(self.name),  # Start with header
-            val.val_column_exist(self.found),
+            OutputHeader(self.name),  # (HEADER)
+            val.field_exist(self.found),  # FIELD EXIST
         ]
         if self.found:
             self._val_results += [
-                val.val_column_sort(self),
-                val.val_cascade_block_not_empty(),
-                val.val_cascade_block_only_one_entry(),
-                val.val_cascade_block_x_or_f(),
-                val.val_cascade_block_use_all_columns(),
+                val.left_right_order(self),  # LEFT/RIGHT ORDER
+                val.cascade_block_not_empty(),  # NOT EMPTY
+                val.single_entry(),  # SINGLE ENTRY
+                val.use_all_columns(),  # USE ALL COLUMNS
+                val.orphan_work_items(),  # ORPHAN WORK ITEMS
+                val.solution_level_terminal(),  # SOLUTION LEVEL TERMINAL
+                val.f_entry(),  # F
+                val.x_entry(),  # X
             ]
 
     # --- Sequence ------------------------------------------------------------
@@ -194,15 +205,116 @@ class CascadeLevel(ft.Field):
         """Validate this field"""
         self._val_results = [
             OutputHeader(self.name),
-            val.val_column_exist(self.found),
+            val.field_exist(self.found),
         ]
         if self.found:
             self._val_results += [
-                val.val_column_sort(self),
-                val.val_cells_not_empty(self.values),
-                val.valid_cascade_levels(self),
-                val.val_matching_cascade_levels(),
+                val.left_right_order(self),
+                val.not_empty(self.values),
+                val.cascade_level_valid_input(self),
+                val.cascade_block_match(),
             ]
+
+
+Tag = collections.namedtuple('Tag', 'name index modifier')
+
+
+class Edge:
+
+    def __init__(self, index, tag_name, other_id, req_statement_field, id_field):
+        """Instances of this class track a single secondary edge between parent
+        and child documented as tags in the ReqStatement field. It requires
+        the ReqStatement field to have already parsed its tags into a common
+        format of index, tag_name, and modifier (in this case: the ID pointer)"""
+        req_statement_field: ReqStatement
+        id_field: ID
+        self.req_statement_field = req_statement_field
+        self.id_field = id_field
+        self.index = index
+        self.tag_name = tag_name  # Parent or Child
+        self.other_id = other_id
+        self.category = tag_name  # self.get_other_edge_tag(req_statement_field.edge_tag_names)
+        self.other_index = self.get_other_index(other_id, id_field.values)
+
+    @property
+    def id_value(self):
+        return self.id_field.values[self.index]
+
+    @staticmethod
+    def get_other_index(other_id, id_values):
+        for index, id_value in enumerate(id_values):
+            if id_value == other_id:
+                return index
+        return -1
+
+    # def get_other_edge_tag(self, both_edge_tag_names):
+    #     edge_tags = set(both_edge_tag_names)  # create shallow copy
+    #     try:
+    #         edge_tags.remove(self.tag_name)
+    #     except KeyError:
+    #         return ''
+    #     return edge_tags.pop()
+
+    @property
+    def connected(self):
+        """Connected means the ID (e.g. P010-0020) passed to this edge exists."""
+        return True if self.other_index != -1 else False
+
+    @property
+    def mutual(self):
+        return False if self.target_edge is None else True
+
+    @property
+    @functools.lru_cache()
+    def target_edge(self):
+        if not self.connected:
+            return None
+        all_edges = self.req_statement_field.edges.as_dict
+        if self.other_index not in all_edges:
+            return None
+        edges_at_target = all_edges[self.other_index]
+        for edge in edges_at_target:
+            if edge.other_index == self.index:
+                return edge
+        return None
+
+    def __repr__(self):
+        return f"<{self.index}/{self.id_value} " \
+               f"{'mutual ' if self.mutual else ''}" \
+               f"{self.category} of {self.other_index}/{self.other_id}>"
+
+
+class Edges:
+
+    def __init__(self, req_statement_field, id_field):
+        """This container class stores the data methods"""
+        req_statement_field: ReqStatement
+        id_field: ID
+        self._edges = collections.defaultdict(list)
+
+        # Populate self._edges
+        for tag in req_statement_field.tags:
+            tag: Tag
+            if tag.name not in req_statement_field.edge_tag_names:
+                continue
+            self._edges[tag.index].append(Edge(
+                index=tag.index,
+                tag_name=tag.name,
+                other_id=tag.modifier,
+                req_statement_field=req_statement_field,
+                id_field=id_field,
+            ))
+
+    @property
+    def as_list(self):
+        list_of_edges = []
+        for edges in self._edges.values():
+            list_of_edges += edges
+        return list_of_edges
+
+    @property
+    def as_dict(self):
+        return self._edges
 
 
 @Fields.collect_field()
@@ -213,17 +325,90 @@ class ReqStatement(ft.Field):
         Besides the req statement itself, it also contains tags, such as for
         marking additional parents and children."""
         super().__init__("Requirement Statement")
+        self.edge_tag_names = {'ParentOf', 'ChildOf'}
+        self.allowed_tag_names = self.edge_tag_names | {
+            'Function',
+            'MatingParts',
+            'MechProperties',
+            'UserInterface',
+        }
+        self._tags = None
+        self._edges = None
 
     def validate(self):
         """Validate this field"""
         self._val_results = [
-            OutputHeader(self.name),
-            val.val_column_exist(self.found),
+            OutputHeader(self.name),  # Start with header
+            val.field_exist(self.found),
         ]
         if self.found:
             self._val_results += [
-                val.val_column_sort(self),
+                val.left_right_order(self),  # LEFT/RIGHT ORDER
+                val.not_empty(self.values),  # NOT EMPTY
+                val.missing_tags(),  # MISSING TAGS
+                val.custom_tags(),  # CUSTOM TAGS
+                val.parent_child_modifiers(),  # PARENT/CHILD MODIFIERS
+                val.mutual_parent_child(),  # MUTUAL PARENT/CHILD
             ]
+
+    @staticmethod
+    def convert_to_hashtag(tags):
+        return set(
+            '#' + tag
+            for tag in tags
+        )
+
+    @property
+    def tags(self):
+        if self._tags is None:
+            self._tags = []
+
+            # Extract tags --------------------------------------------------------
+            for index, cell_value in enumerate(self.values):
+                # --- split up cell string ----------------------------------------
+                try:
+                    cell_lines = cell_value.split('\n')
+                except AttributeError:
+                    continue
+                for line in cell_lines:
+                    words = line.split()
+                    # --- Check for tag -------------------------------------------
+                    if len(words) > 0:
+                        potential_tag = words[0]
+                    else:
+                        continue
+                    if potential_tag.startswith('#'):
+                        tag_name = potential_tag[1:]
+                        modifier = words[1] if len(words) > 1 else ''
+                        # --- Save tag, index, and modifier -----------------------
+                        self._tags.append(Tag(tag_name, index, modifier))
+        return self._tags
+
+    @property
+    # @functools.lru_cache()
+    def tags_ven_diagram(self):
+        allowed_tags = self.allowed_tag_names
+        actual_tags = set(tag.name for tag in self.tags)
+
+        TagNames = collections.namedtuple('TagNames', 'base actual base_found missing additional')
+
+        return TagNames(
+            base=allowed_tags,
+            actual=actual_tags,
+            base_found=actual_tags & allowed_tags,
+            missing=allowed_tags - actual_tags,
+            additional=actual_tags - allowed_tags,
+        )
+
+    @property
+    def edges(self):
+        if self._edges is None:
+            fields: Fields = context.fields.get()
+            self._edges = Edges(
+                req_statement_field=self,
+                id_field=fields.get_field_object('ID')
+            )
+        return self._edges
 
 
 @Fields.collect_field()
@@ -237,12 +422,12 @@ class ReqRationale(ft.Field):
         """Validate this field"""
         self._val_results = [
             OutputHeader(self.name),
-            val.val_column_exist(self.found),
+            val.field_exist(self.found),
         ]
         if self.found:
             self._val_results += [
-                val.val_column_sort(self),
-                val.val_cells_not_empty(self.values),
+                val.left_right_order(self),
+                val.not_empty(self.values),
             ]
 
 
@@ -257,12 +442,13 @@ class VVStrategy(ft.Field):
         """Validate this field"""
         self._val_results = [
             OutputHeader(self.name),
-            val.val_column_exist(self.found),
+            val.field_exist(self.found),
         ]
         if self.found:
             self._val_results += [
-                val.val_column_sort(self),
-                val.val_cells_not_empty(self.values)
+                val.left_right_order(self),
+                val.not_empty(self.values),
+                val.business_need_na(self.values),
             ]
 
 
@@ -277,11 +463,13 @@ class VVResults(ft.Field):
         """Validate this field"""
         self._val_results = [
             OutputHeader(self.name),  # Start with header
-            val.val_column_exist(self.found),
+            val.field_exist(self.found),
         ]
         if self.found:
             self._val_results += [
-                val.val_column_sort(self),
+                val.left_right_order(self),
+                val.not_empty(self.values),
+                val.business_need_na(self.values),
             ]
 
 
@@ -296,12 +484,12 @@ class Devices(ft.Field):
         """Validate this field"""
         self._val_results = [
             OutputHeader(self.name),  # Start with header
-            val.val_column_exist(self.found),
+            val.field_exist(self.found),
         ]
         if self.found:
             self._val_results += [
-                val.val_column_sort(self),
-                val.val_cells_not_empty(self.values),
+                val.left_right_order(self),
+                val.not_empty(self.values),
             ]
 
 
@@ -316,12 +504,14 @@ class DOFeatures(ft.Field):
         """Validate this field"""
         self._val_results = [
             OutputHeader(self.name),  # Start with header
-            val.val_column_exist(self.found),
+            val.field_exist(self.found),
         ]
         if self.found:
             self._val_results += [
-                val.val_column_sort(self),
-                val.val_cells_not_empty(self.values),
+                val.left_right_order(self),
+                val.not_empty(self.values),
+                val.ctq_format(self.values),
+                val.missing_ctq(self.values),
             ]
 
 
@@ -336,12 +526,14 @@ class CTQ(ft.Field):
         """Validate this field"""
         self._val_results = [
             OutputHeader(self.name),  # Start with header
-            val.val_column_exist(self.found),
+            val.field_exist(self.found),
         ]
         if self.found:
             self._val_results += [
-                val.val_column_sort(self),
-                val.val_cells_not_empty(self.values),
+                val.left_right_order(self),
+                val.not_empty(self.values),
+                val.ctq_valid_input(self.values),
+                val.ctq_to_yes(self.values),
             ]
 
 

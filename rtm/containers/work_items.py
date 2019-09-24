@@ -22,6 +22,7 @@ class WorkItem:
         """A work item is basically a row in the RTM worksheet. It's an item
         that likely a parent and at least one child."""
         self.index = index  # work item's vertical position relative to other work items
+        self.edges = []
 
     @property
     @functools.lru_cache()
@@ -34,6 +35,13 @@ class WorkItem:
             for depth, value in enumerate(cascade_block_row_cells)
             if not cell_empty(value)
         ]
+
+    @property
+    def value(self):
+        try:
+            return self.cascade_block_row[0][1]
+        except IndexError:
+            return None
 
     @property
     def depth(self):
@@ -99,6 +107,16 @@ class WorkItem:
             return self
         return self.parent.root
 
+    @property
+    def has_root(self) -> bool:
+        # If a work item doesn't have a root, then that error will be caught elsewhere.
+        # No need to return an error here.
+        return self.root is not MissingWorkItem
+
+    @property
+    def allowed_to_be_terminal_work_item(self) -> bool:
+        return self.depth >= 3
+
     def __repr__(self):
         return f"<d: {self.depth}, is_root: {self.is_root}, p: {self.parent.index}, r: {self.root.index}>"
 
@@ -135,6 +153,29 @@ class WorkItems(collections.abc.Sequence):
     def __init__(self):
         """Sequence of work items"""
         self._work_items = [WorkItem(index) for index in range(context.fields.get().height)]
+
+    @property
+    def child_count(self) -> dict:
+        result = collections.defaultdict(int)
+        for work_item in self:
+            result[work_item.parent.index] += 1
+        return result
+
+    @property
+    def childless_items(self) -> list:
+        all_indices = set(range(len(self)))
+        indices_with_children = set(self.child_count.keys())
+        childless_indices = sorted(list(all_indices - indices_with_children))
+        return [self[index] for index in childless_indices]
+
+    @property
+    def leaf_items(self):
+        # Leaves meet two criteria:
+        #   No children
+        #   Has a root item
+        #   Isn't a room item (which is actually redundant given the above check)
+        # A "terminal" work item is a leaf in a graph: http://mathworld.wolfram.com/TreeLeaf.html
+        return [work_item for work_item in self.childless_items if work_item.has_root]
 
     # --- Sequence ------------------------------------------------------------
     def __getitem__(self, item) -> WorkItem:

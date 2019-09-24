@@ -57,15 +57,3 @@ def get_work_items(worksheet_name):
 @pytest.fixture(scope="function")
 def fix_work_items():
     return get_work_items
-
-
-# --- lru_cache demo (to increase pytest speeds) ------------------------------
-@functools.lru_cache()
-def double(value):
-    print(f"doubling {value}...")
-    return value*2
-
-
-@pytest.fixture(scope="function")
-def doubling_func():
-    return double

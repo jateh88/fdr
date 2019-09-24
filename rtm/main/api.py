@@ -43,7 +43,7 @@ def main(path=None):
 
     click.echo(
         "\nThank you for using the RTM Validator."
-        "\nIf you have questions or suggestions, please contact a Roebling team member."
+        "\nIf you have questions or suggestions, please contact a Roebling team member.\n"
     )
 
 

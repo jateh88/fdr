@@ -35,86 +35,99 @@ General Notes
 
 ID
 ''
-
-- Each ID must be unique (done!)
-- sorts alphabetically (done!)
-- Procedure Step IDs must be formatted "PXYZ" e.g. "P010" (done!)
-- All other IDs must start with the ID of its root Procedure Step. Example: if a Procedure Step has an ID of "P010", then the following VOC USER NEED could have an ID of "P010-0010". (done!)
+- **UNIQUE**: Each ID must be unique
+- **ALPHABETICAL SORT**: The entire column must be in alphabetical order.
+- **PROCEDURE STEP FORMAT**: Procedure Step IDs must be formatted `PXYZ` e.g. `P010`
+- **START WITH ROOT ID**: All other IDs must start with the ID of its root Procedure Step. Example: if a Procedure Step has an ID of "P010", then the following VOC USER NEED could have an ID of "P010-0010".
 
 Cascade Block
 '''''''''''''
-- must contain at a minimum these columns:
-    - Procedure Step
-    - Need
-    - Design Input
-    - Solution Level 1
-- optionally, may also contain these columns:
-    - Solution Level 2
-    - Solution Level 3
-    - ...
-    - Solution Level n
-- one and only one cell gets marked
-- no missing steps
-- each requirements path starts with Procedure Step
-- each requirements path terminates in 'F' (done)
-- all DO Solution levels get used (done)
-- only contains characters X or F (done)
+The Cascade Block is a group of columns: Procedure Step, Need, Design Input, Solution Level 1, ..., Solution Level n.
+
+- **NOT EMPTY**: Error if Cascade Block row is entirely empty.
+- **SINGLE ENTRY**: Warning if more than one cell in Cascade Block row has an entry. Only the first is considered.
+- **USE ALL COLUMNS**: Warning if any Cascade Block columns are completely blank.
+- **ORPHAN WORK ITEMS**: Each work item must trace back to a procedure step.
+- **SOLUTION LEVEL TERMINAL**: Each requirements trace terminates at the Solution Level.
+- **F ENTRY**: Terminal work items are marked with 'F' in the Cascade Block.
+- **X ENTRY**: All other work items are marked with 'X'.
+
 
 Cascade Level
 '''''''''''''
-- NOT EMPTY (done!)
-- VALID ENTRIES: is "procedure step", "voc user need", "business need", "risk need", "design input", or "design output solution" (done!)
-- MATCHING LEVEL: matches selection in Cascade Block (done!)
+- **NOT EMPTY**
+- **VALID INPUT**: Procedure Step, VOC User Need, Business Need, Risk Need, Design Input, or Solution Level
+- **CASCADE BLOCK MATCH**: matches selection in Cascade Block
 
 Requirement Statement
 '''''''''''''''''''''
-- Not empty (WorkItemObject)
-- CHILD - valid pointer
-- ADDITIONALPARENT 
-- valid pointer (CascadeObject)
-- check for ______ hashtags e.g. #Function, #MatingParts
-- report on extra tags found?
+RTM Validator recognizes text string as tags if they meet these criteria:
+
+- Text string starts with `#` (pound sign)
+- Text string begins on a new line.
+
+Some tags (e.g. #ParentOf, #ChildOf) take modifiers. RTM Validator recognizes text strings as modifiers if they meet these criteria:
+
+- Text string is separated from tag by white space (one or more spaces).
+- Occurs on same line as tag
+- modifiers cannot contain white space.
+
+Examples:
+
+- `#ParentOf P010-020` - tag: `ParentOf`; modifier: `P010-020`.
+- `#ChildOf P 020-054` - tag: `ChildOf`; modifier: `P`. Note that the `020-054` is ignored.
+- `#ParentOf` - tag: `ParentOf`; modifier: (None).
+
+Available Base Tags:
+
+- ParentOf
+- ChildOf
+- Function
+- MatingParts
+- MechProperties
+- UserInterface
+
+Checks
+
+- **NOT EMPTY**
+- **MISSING TAGS**: Use each base tag at least once in the document
+- **CUSTOM TAG**: Custom tags are allowed, but produce a warning.
+- **PARENT/CHILD MODIFIERS** ParentOf and ChildOf modifiers must match a value in the ID column.
+- **MUTUAL PARENT/CHILD**: Each ChildOf work item must point to a work item that is itself a ParentOf the first work item.
 
 Requirement Rationale
 '''''''''''''''''''''
-- not empty (done)
+- **NOT EMPTY**
 
 VorV Strategy
 '''''''''''''
-- not empty (done)
-- if "business need", strategy is not required. Use N/A (is this true?)
+- **NOT EMPTY**
+- **BUSINESS NEED N/A**: Business Need work items are marked with 'N/A'.
 
 VorV Results
 ''''''''''''
-- not empty
-- if "business need", results are not required. all others require results (Use 'N/A' in this cell?)
-- if windchill number is present, check its formatting. (10 digits)
-- print report of applicable documents? (?)
+- **NOT EMPTY**
+- **BUSINESS NEED N/A**: Business Need work items are marked with 'N/A'.
 
 Devices
 '''''''
-- not empty
-- no repeats in cell
-- print report of device list?
+- **NOT EMPTY**
 
 DO Features
 '''''''''''
-- not empty
-- if contains features that are CTQs, CTQ ID should be formatted as "(CTQ##)"
-- if contains features that are CTQs, check that CTQ Y/N column is "yes"
-- print report of CTQ IDs and correlated features/devices?
+- **NOT EMPTY**
+- **CTQ FORMAT**: if contains features that are CTQs, CTQ ID should be formatted as "(CTQ##)"
+- **MISSING CTQ**: if CTQ Y/N yes, check for CTQ IDs in DO Features column
 
 CTQ Y/N
 '''''''
-- not empty
-- validated input list
-- is "yes", "no", "N/A", or " - " (only procedure step can have " - ")
-- if yes, check for CTQ IDs in DO Features column
+- **NOT EMPTY**
+- **VALID INPUT**: "yes", "no", "N/A", or " - " (only procedure step can have " - ")
+- **CTQ -> YES**: If DO Feature has a ctq, then this cell needs a yes
 
-Other
-'''''
-- 'N/A' check? (WorkItemObject)
-- " - " check
+Potential Future Features
+-------------------------
+- Report on Windchill documents (WC#s, where used)
 
 Developer Notes
 ---------------
@@ -166,4 +179,4 @@ v 0.1.16
 
 v 0.1.17
 ''''''''''''
-* add Cascade Level validation
+* add Cascade Level & Requirement Statement validation
