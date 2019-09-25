@@ -19,8 +19,12 @@ import rtm.main.context_managers as context
 from rtm.__init__ import __version__ as current_version
 
 
-def main(path=None):
+def main(path=None, version=False):
     """This is the main function."""
+
+    if version:
+        click.echo(f'v{current_version}')
+        return
 
     click.clear()
     click.echo(
@@ -51,7 +55,7 @@ def main(path=None):
     )
 
 
-def version_check() -> str:
+def version_check():
     """Tell user if app is up to date"""
 
     project_info = pypi_get.get("dps-rtm")

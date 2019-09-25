@@ -12,7 +12,7 @@ from rtm.main import api
 
 
 @click.command()
-def main():
-    """`rtm` on the command line will run the this function. Later, this will
-    have more functionality. That's why it appear superfluous right now"""
-    api.main()
+@click.option('-V', '--version', is_flag=True, help="Show version and exit.")
+def main(version):
+    """RTM Validator checks your RTM worksheet for common errors."""
+    api.main(version=version)
