@@ -7,6 +7,7 @@ related to validation errors (e.g. missing columns)"""
 
 # --- Third Party Imports -----------------------------------------------------
 import click
+import pypi_get
 
 # --- Intra-Package Imports ---------------------------------------------------
 from rtm.main.excel import get_rtm_path
@@ -15,6 +16,7 @@ from rtm.containers.fields import Fields
 import rtm.containers.worksheet_columns as wc
 import rtm.containers.work_items as wi
 import rtm.main.context_managers as context
+from rtm.__init__ import __version__ as current_version
 
 
 def main(path=None):
@@ -25,6 +27,8 @@ def main(path=None):
         "\nWelcome to the DePuy Synthes Requirements Trace Matrix (RTM) Validator."
         "\nPlease select an RTM excel file you wish to validate."
     )
+
+    version_check()  # tell user if app is up to date
 
     try:
         if not path:
@@ -39,12 +43,32 @@ def main(path=None):
             fields.validate()
             fields.print()
     except RTMValidatorError as e:
-        click.echo(e)
+        click.secho(str(e), fg='red', bold=True,)
 
     click.echo(
         "\nThank you for using the RTM Validator."
         "\nIf you have questions or suggestions, please contact a Roebling team member.\n"
     )
+
+
+def version_check() -> str:
+    """Tell user if app is up to date"""
+
+    project_info = pypi_get.get("dps-rtm")
+    pypi_version = project_info['info']['version']
+
+    if pypi_version == current_version:
+        click.echo(f"\nYour app is up to date ({current_version})")
+    else:
+        click.secho(
+            "\nYour app is out of date.",
+            fg='red',
+            bold=True,
+        )
+        click.echo(f"Currently installed: {current_version}")
+        click.echo(f"Available: {pypi_version}")
+        click.echo("Upgrade to the latest by entering the following:")
+        click.echo(f"pip install --upgrade dps-rtm")
 
 
 if __name__ == "__main__":
