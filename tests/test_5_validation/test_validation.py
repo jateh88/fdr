@@ -21,7 +21,7 @@ def test_column_exist(capsys):
     tab_len = 8
     io = [
         (True, f"\tPass\tFIELD EXIST\n".expandtabs(tab_len)),
-        (False, f"\tError\tFIELD EXIST - Field not found.".expandtabs(tab_len)),
+        (False, f"\tError\tFIELD EXIST".expandtabs(tab_len)),
     ]
     for item in io:
         result = val.field_exist(item[0])

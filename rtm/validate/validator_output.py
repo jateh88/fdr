@@ -91,26 +91,31 @@ class ValidationResult(ValidatorOutput):
         )
 
         # --- Print Rule Title ------------------------------------------------
+        title = self._title.upper()
+
         if self._explanation:
-            title = f'{self._title} - '.upper()
-            click.secho(title.upper(), bold=True, nl=False)
+            click.secho(title, bold=True, nl=False)
         else:
-            title = self._title.upper()
-            click.secho(title, bold=True)
+            click.echo(title)
             return
 
         # --- Print Explanation (and Rows) ------------------------------------
-
-        initial_indent_len = len(f'{title}') + title_indent_len
-        initial_indent = ' ' * initial_indent_len
+        explanation_indent_len = title_indent_len + len(title) + 3  # 3 b/c of the dash+whitespace
         explanation = f'{self._explanation.strip()} {self.pretty_rows}'
-        explanation_wrapped = click.wrap_text(
-            explanation,
-            width=max_output_width,
-            initial_indent=initial_indent,
-            subsequent_indent=' '*title_indent_len
-        ).strip()
-        click.echo(explanation_wrapped)
+        explanation_len = len(explanation)
+
+        if explanation_indent_len + explanation_len <= max_output_width:
+            click.echo(f' - {explanation}')
+        else:
+            subsequent_indent_len = title_indent_len + 4
+            explanation_wrapped = click.wrap_text(
+                explanation,
+                width=max_output_width,
+                initial_indent=' '*subsequent_indent_len,
+                subsequent_indent=' '*subsequent_indent_len,
+            )
+            click.echo()
+            click.echo(explanation_wrapped)
 
 
 class OutputHeader(ValidatorOutput):

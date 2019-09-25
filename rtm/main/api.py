@@ -22,17 +22,23 @@ from rtm.__init__ import __version__ as current_version
 def main(path=None, version=False):
     """This is the main function."""
 
+    # Version option: Display version and exit.
     if version:
         click.echo(f'v{current_version}')
         return
 
+    # Welcome message
     click.clear()
     click.echo(
         "\nWelcome to the DePuy Synthes Requirements Trace Matrix (RTM) Validator."
         "\nPlease select an RTM excel file you wish to validate."
     )
 
-    version_check()  # tell user if app is up to date
+    # Tell user if app is up to date
+    version_check()
+
+    #  Help hint for users unfamiliar with command line tools:
+    click.echo("\nHINT: enter the following to see all available app options:\nrtm --help")
 
     try:
         if not path:
