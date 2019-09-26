@@ -180,3 +180,19 @@ v 0.1.16
 v 0.1.17
 ''''''''''''
 * add Cascade Level & Requirement Statement validation
+* add placeholders for all remaining checks
+
+v 0.1.18
+''''''''''''
+* implement max width on output
+* version check
+
+v 0.1.19
+''''''''''''
+* add pypi-get to required
+* add -V, --version option
+
+v 0.1.20
+''''''''''''
+* add --help hint
+* improve output indenting
