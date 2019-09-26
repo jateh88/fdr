@@ -306,7 +306,7 @@ def f_entry() -> ValidationResult:
     ]
 
     # Output
-    title = "Leaf Items = F"
+    title = "F Entry"
     if not error_indices:
         score = "Pass"
         explanation = f"All Terminal Work Items are marked with an `F`"
