@@ -15,7 +15,7 @@ home-page = "https://github.com/jonathanchukinas/fdr"
 classifiers = ["License :: OSI Approved :: MIT License"]
 description-file = "README.rst"
 requires-python = ">=3.6"
-requires = ["click", "openpyxl", "colorama", "pypi-get"]
+requires = ["click", "openpyxl", "colorama"]
 
 [tool.flit.scripts]
 rtm = "rtm.main.cli:main"
