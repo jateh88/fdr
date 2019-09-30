@@ -19,6 +19,19 @@ class ValidatorOutput(metaclass=abc.ABCMeta):
         return
 
 
+def pretty_int_list(numbers) -> str:
+    def as_range(iterable):
+        """Convert list of integers to an easy-to-read string. Used to display the
+    on the console the rows that failed validation."""
+        list_int = list(iterable)
+        if len(list_int) > 1:
+            return f'{list_int[0]}-{list_int[-1]}'
+        else:
+            return f'{list_int[0]}'
+
+    return ', '.join(as_range(g) for _, g in groupby(numbers, key=lambda n, c=count(): n-next(c)))
+
+
 class ValidationResult(ValidatorOutput):
     """Each validation function returns an instance of this class. Calling its
     print() function prints a standardized output to the console."""
@@ -58,64 +71,16 @@ class ValidationResult(ValidatorOutput):
         first_row = 2  # this is the row # directly after the headers
         return [index + first_row for index in self.indices]
 
-    @staticmethod
-    def _pretty_int_list(numbers) -> str:
-        def as_range(iterable):
-            """Convert list of integers to an easy-to-read string. Used to display the
-            on the console the rows that failed validation."""
-            list_int = list(iterable)
-            if len(list_int) > 1:
-                return f'{list_int[0]}-{list_int[-1]}'
-            else:
-                return f'{list_int[0]}'
-        return ', '.join(as_range(g) for _, g in groupby(numbers, key=lambda n, c=count(): n-next(c)))
-
-    @property
-    def pretty_rows(self):
-        return self._pretty_int_list(self.rows)
-
     def print(self) -> None:
-
-        # --- Setup -----------------------------------------------------------
-        tab_character_width = 8
-        title_indent_len = 2 * tab_character_width
-        terminal_width = click.get_terminal_size()[0]
-        max_output_width = terminal_width - 20
-
-        # --- Print Score in Color --------------------------------------------
-        click.secho(
-            f"\t{self.score}\t".expandtabs(tab_character_width),
-            fg=self._get_color(),
-            bold=True,
-            nl=False
-        )
-
-        # --- Print Rule Title ------------------------------------------------
-        title = self._title.upper()
-
+        # --- Print Score in Color ------------------------------------------------
+        click.secho(f"\t{self.score}", fg=self._get_color(), bold=True, nl=False)
+        # --- Print Rule Title ----------------------------------------------------
+        click.secho(f"\t{self._title.upper()}", bold=True, nl=False)
+        # --- Print Explanation (and Rows) ----------------------------------------
         if self._explanation:
-            click.secho(title, bold=True, nl=False)
-        else:
-            click.echo(title)
-            return
 
-        # --- Print Explanation (and Rows) ------------------------------------
-        explanation_indent_len = title_indent_len + len(title) + 3  # 3 b/c of the dash+whitespace
-        explanation = f'{self._explanation.strip()} {self.pretty_rows}'
-        explanation_len = len(explanation)
-
-        if explanation_indent_len + explanation_len <= max_output_width:
-            click.echo(f' - {explanation}')
-        else:
-            subsequent_indent_len = title_indent_len + 4
-            explanation_wrapped = click.wrap_text(
-                explanation,
-                width=max_output_width,
-                initial_indent=' '*subsequent_indent_len,
-                subsequent_indent=' '*subsequent_indent_len,
-            )
-            click.echo()
-            click.echo(explanation_wrapped)
+            click.secho(f' - {self._explanation}{pretty_int_list(self.rows)}', nl=False)
+        click.echo()  # new line
 
 
 class OutputHeader(ValidatorOutput):
