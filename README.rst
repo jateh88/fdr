@@ -24,6 +24,7 @@ J&J Quick Start
     #. Note: You might see a note about ``pip`` being out of date. This is ok, but feel free to update it as suggested.
 #. **Run** ``rtm``
     a. In Command Prompt, type ``rtm``
+    #. Note: Running the command prompt with elevated privileges is only needed for installing and upgrading ``rtm``. To run the program, just open command prompt normally.
     
 
 How to Upgrade to Latest Version
