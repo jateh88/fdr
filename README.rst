@@ -24,6 +24,18 @@ J&J Quick Start
     #. Note: You might see a note about ``pip`` being out of date. This is ok, but feel free to update it as suggested.
 #. **Run** ``rtm``
     a. In Command Prompt, type ``rtm``
+    
+
+How to Upgrade to Latest Version
+--------------------------------
+1. **Run Command Prompt with Elevated Privileges**
+    a. Hit the ``Windows Key`` and type ``cmd`` to search for the Windows command prompt
+    #. Right-click ``cmd`` and select ``open file location``. This opens File Explorer.
+    #. Right-click on the ``cmd`` icon and select ``Run with elevated privileges``.
+#. **Upgrade** ``dps-rtm``
+    a. In Command Prompt, type ``pip install --upgrade dps-rtm``
+
+
 
 Validation Rules
 -----------------
