@@ -10,8 +10,8 @@ import pytest
 import rtm.main.api as api
 
 
-@pytest.mark.skip('messes with coverage report')
+# @pytest.mark.skip('messes with coverage report')
 def test_smoke_test(fix_path):
 
-    api.main(path=fix_path)
+    api.main(path=fix_path, highlight_bool=True)
     assert True

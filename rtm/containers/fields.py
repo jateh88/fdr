@@ -59,8 +59,19 @@ class Fields(collections.abc.Sequence):
 
     def print(self):
         """Output validation results to console for field objects in sequence"""
+        # TODO give this a better name, one that shows that this is command line output
         for field_ in self:
             field_.print()
+
+    @property
+    def excel_markup(self):
+        comments = collections.defaultdict(list)
+        for field in self:
+            for key, value in field.excel_markup.items():
+                comments[key] += value
+        return comments
+
+
 
     # --- Sequence ------------------------------------------------------------
     def __getitem__(self, item):
@@ -82,10 +93,7 @@ class ID(ft.Field):
     def validate(self):
         """Validate this field"""
         work_items = context.work_items.get()
-        self._val_results = [
-            OutputHeader(self.name),
-            val.field_exist(self.found),
-        ]
+        self._val_results = self.val_results_header_and_field_exists()
         if self.found:
             self._val_results += [
                 val.left_right_order(self),
@@ -168,10 +176,7 @@ class CascadeBlock(ft.Field):
 
     def validate(self):
         """Validate this field"""
-        self._val_results = [
-            OutputHeader(self.name),  # (HEADER)
-            val.field_exist(self.found),  # FIELD EXIST
-        ]
+        self._val_results = self.val_results_header_and_field_exists()
         if self.found:
             self._val_results += [
                 val.left_right_order(self),  # LEFT/RIGHT ORDER
@@ -203,10 +208,7 @@ class CascadeLevel(ft.Field):
 
     def validate(self):
         """Validate this field"""
-        self._val_results = [
-            OutputHeader(self.name),
-            val.field_exist(self.found),
-        ]
+        self._val_results = self.val_results_header_and_field_exists()
         if self.found:
             self._val_results += [
                 val.left_right_order(self),
@@ -337,10 +339,7 @@ class ReqStatement(ft.Field):
 
     def validate(self):
         """Validate this field"""
-        self._val_results = [
-            OutputHeader(self.name),  # Start with header
-            val.field_exist(self.found),
-        ]
+        self._val_results = self.val_results_header_and_field_exists()
         if self.found:
             self._val_results += [
                 val.left_right_order(self),  # LEFT/RIGHT ORDER
@@ -420,10 +419,7 @@ class ReqRationale(ft.Field):
 
     def validate(self):
         """Validate this field"""
-        self._val_results = [
-            OutputHeader(self.name),
-            val.field_exist(self.found),
-        ]
+        self._val_results = self.val_results_header_and_field_exists()
         if self.found:
             self._val_results += [
                 val.left_right_order(self),
@@ -440,10 +436,7 @@ class VVStrategy(ft.Field):
 
     def validate(self):
         """Validate this field"""
-        self._val_results = [
-            OutputHeader(self.name),
-            val.field_exist(self.found),
-        ]
+        self._val_results = self.val_results_header_and_field_exists()
         if self.found:
             self._val_results += [
                 val.left_right_order(self),
@@ -461,10 +454,7 @@ class VVResults(ft.Field):
 
     def validate(self):
         """Validate this field"""
-        self._val_results = [
-            OutputHeader(self.name),  # Start with header
-            val.field_exist(self.found),
-        ]
+        self._val_results = self.val_results_header_and_field_exists()
         if self.found:
             self._val_results += [
                 val.left_right_order(self),
@@ -482,10 +472,7 @@ class Devices(ft.Field):
 
     def validate(self):
         """Validate this field"""
-        self._val_results = [
-            OutputHeader(self.name),  # Start with header
-            val.field_exist(self.found),
-        ]
+        self._val_results = self.val_results_header_and_field_exists()
         if self.found:
             self._val_results += [
                 val.left_right_order(self),
@@ -502,10 +489,7 @@ class DOFeatures(ft.Field):
 
     def validate(self):
         """Validate this field"""
-        self._val_results = [
-            OutputHeader(self.name),  # Start with header
-            val.field_exist(self.found),
-        ]
+        self._val_results = self.val_results_header_and_field_exists()
         if self.found:
             self._val_results += [
                 val.left_right_order(self),
@@ -524,10 +508,7 @@ class CTQ(ft.Field):
 
     def validate(self):
         """Validate this field"""
-        self._val_results = [
-            OutputHeader(self.name),  # Start with header
-            val.field_exist(self.found),
-        ]
+        self._val_results = self.val_results_header_and_field_exists()
         if self.found:
             self._val_results += [
                 val.left_right_order(self),

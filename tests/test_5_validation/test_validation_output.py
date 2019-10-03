@@ -22,7 +22,7 @@ def test_validation_result(capsys):
     captured = capsys.readouterr()
 
     # --- Compare to expected
-    expected_capture = '\tError\tYOU FAIL - here are the rows that failed: 2-6\n'
+    expected_capture = '\tError\tYOU FAIL - here are the rows that failed: 3-7\n'
     assert captured.out == expected_capture
 
 

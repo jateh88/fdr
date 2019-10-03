@@ -9,7 +9,7 @@ related to validation errors (e.g. missing columns)"""
 import click
 
 # --- Intra-Package Imports ---------------------------------------------------
-from rtm.main.excel import get_rtm_path
+import rtm.main.excel as excel
 from rtm.main.exceptions import RTMValidatorError
 from rtm.containers.fields import Fields
 import rtm.containers.worksheet_columns as wc
@@ -17,9 +17,8 @@ import rtm.containers.work_items as wi
 import rtm.main.context_managers as context
 
 
-def main(path=None):
-    """This is the main function."""
-
+def main(highlight_bool=False, highlight_original=False, path=None):
+    """This is the main function called by the command line interface."""
 
     click.clear()
     click.echo(
@@ -27,12 +26,15 @@ def main(path=None):
         "\nPlease select an RTM excel file you wish to validate."
     )
 
+    if highlight_original:
+        highlight_original = click.confirm('Are you sure you want to edit the original excel file? Images, etc will be lost.')
 
     try:
         if not path:
-            path = get_rtm_path()
-        with context.path.set(path):
-            worksheet_columns = wc.WorksheetColumns("Procedure Based Requirements")
+            path = excel.get_rtm_path()
+        wb = excel.get_workbook(path)
+        ws = excel.get_worksheet(wb, "Procedure Based Requirements")
+        worksheet_columns = wc.WorksheetColumns(ws)
         with context.worksheet_columns.set(worksheet_columns):
             fields = Fields()
         with context.fields.set(fields):
@@ -40,6 +42,8 @@ def main(path=None):
         with context.fields.set(fields), context.work_items.set(work_items):
             fields.validate()
             fields.print()
+        if highlight_bool:
+            excel.mark_up_excel(path, wb, ws, fields.excel_markup, highlight_original)
     except RTMValidatorError as e:
         click.echo(e)
 
