@@ -186,3 +186,8 @@ v 0.1.18
 ''''''''''''
 * implement max width on output
 * version check
+
+v 0.1.24
+''''''''''''
+* text wrap
+* version check
