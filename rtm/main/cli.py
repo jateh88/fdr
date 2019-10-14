@@ -22,5 +22,5 @@ def main(ctx):
 
 @main.command()
 @click.option('--original', '-o', is_flag=True)
-def highlight(original):
+def markup(original):
     api.main(True, original)

@@ -16,6 +16,7 @@ import rtm.validate.checks as checks
 import rtm.main.context_managers as context
 from rtm.validate.validator_output import ValidationResult
 from rtm.containers.work_items import MissingWorkItem
+from rtm.main import config
 
 
 # --- General-purpose validation ----------------------------------------------
@@ -28,13 +29,13 @@ def field_exist(field_found, field_name=None) -> ValidationResult:
         explanation = None
     else:
         score = "Error"
-        explanation = "Field not found. Make sure your headers exactly match the title shown above."
+        explanation = f"Field not found. Either your header does not exactly match '{field_name}' or it is not located in row {config.header_row}."
     return ValidationResult(
         score=score,
         title="Field Exist",
         cli_explanation=explanation,
         markup_type='notes',
-        markup_explanation=f"Field not found. Make sure your header matches '{field_name}' exactly.",
+        markup_explanation=explanation,
     )
 
 
@@ -392,7 +393,7 @@ def cascade_level_valid_input(field) -> ValidationResult:
         cli_explanation=explanation,
         nonconforming_indices=error_indices,
         markup_type='body',
-        markup_explanation='This cell contains an incorrect value. Choose from the following: {list(allowed_values)}',
+        markup_explanation=f'This cell contains an incorrect value. Choose from the following: {list(allowed_values)}',
     )
 
 

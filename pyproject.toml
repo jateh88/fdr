@@ -8,14 +8,14 @@ module = "rtm"  # source code directory
     #   - description. Must take the form of docstring at top of file.
     #       Only the first line will be publish to PyPI. The other lines are there for developers' benefit.
     #   - version. example:  __verion__ = "0.1.0"
-dist-name = "dps-rtm"  # Module name as shown on PyPI
+dist-name = "dps-rtm"  # Module name as shown on PyPI. If this ever changes, be sure to update get_versions() func.
 author = "Jonathan Chukinas"  # Visible on PyPI
 author-email = "chukinas@gmail.com"  # Visible on PyPI
 home-page = "https://github.com/jonathanchukinas/fdr"
 classifiers = ["License :: OSI Approved :: MIT License"]
 description-file = "README.rst"
 requires-python = ">=3.6"
-requires = ["click", "openpyxl", "colorama", "pypi-get", "mentormatch"]
+requires = ["click", "openpyxl", "colorama", "requests"]
 
 [tool.flit.scripts]
 rtm = "rtm.main.cli:main"

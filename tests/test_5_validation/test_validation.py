@@ -18,14 +18,14 @@ from rtm.containers.work_items import WorkItems
 # --- General Purpose Validation ----------------------------------------------
 def test_column_exist(capsys):
     io = [
-        (True, f"\tPass\tFIELD EXIST\n"),
-        (False, f"\tError\tFIELD EXIST - Field not found. Make sure your headers exactly match the title shown above.\n"),
+        (True, "\tPass\tFIELD EXIST"),
+        (False, "\tError\tFIELD EXIST"),
     ]
     for item in io:
         result = val.field_exist(item[0])
         result.print()
         captured = capsys.readouterr()
-        assert captured.out == item[1]
+        assert item[1] in captured.out
 
 
 @pytest.mark.parametrize("reverse", [False, True])

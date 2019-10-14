@@ -200,4 +200,11 @@ v 0.1.22
 
 v 0.1.23
 ''''''''''''
-* add upgrade instruction to readme
+* implement max width on output
+* version check
+
+v 0.1.26
+''''''''''''
+* version check
+* ``rtm markup`` (no longer ``rtm highlight``) saves marked-up excel sheet to subdirectory and open file
+* headers must be located in row 2

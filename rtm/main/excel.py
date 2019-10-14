@@ -6,17 +6,18 @@ import datetime
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog
-import openpyxl
-from openpyxl.styles import Alignment, Color, Font, PatternFill
-import collections
+import os
 
 # --- Third Party Imports -----------------------------------------------------
 import click
-
-# --- Intra-Package Imports ---------------------------------------------------
+import openpyxl
+from openpyxl.styles import Alignment, Color, Font, PatternFill
 from openpyxl.comments import Comment
 
+# --- Intra-Package Imports ---------------------------------------------------
+from rtm.containers.markup import CellMarkup
 from rtm.main import exceptions as exc
+from rtm.main.versions import get_version_check_message
 
 
 def get_rtm_path(path_option='default') -> Path:
@@ -69,13 +70,19 @@ def now_str(pretty=False):
 
 
 def get_save_path(original_path, modify_original_file=False):
-    # TODO docstrings
+    """Get the full file path. Create subdirectory if necessary."""
+
+    # --- When modifying original file ----------------------------------------
     if modify_original_file:
         return original_path
+
+    # --- When saving a copy of the original file -----------------------------
     original_path = Path(original_path)
-    directory = original_path.parent
-    name = f'{now_str()}_{original_path.name}'
-    return directory / name
+    original_directory = original_path.parent
+    subdirectory = original_directory/'rtm_validator_results'
+    subdirectory.mkdir(exist_ok=True)
+    file_name = f'{now_str()}_{original_path.name}'
+    return subdirectory / file_name
 
 
 def get_cell_comment_string(comments):
@@ -83,12 +90,6 @@ def get_cell_comment_string(comments):
     titles_and_comments = [f"{comment[0].upper()}\n{comment[1]}" for comment in comments]
     comments_string = '\n\n'.join(titles_and_comments)
     return f"{now_str(pretty=True)}\n\n{comments_string}"
-
-
-CellMarkup = collections.namedtuple("CellMarkup", "comment is_error indent size is_bold")
-# is_error will drive what color to highlight the cell (e.g. green for neutral and orange for error)
-# indent: indent the cell contents if true
-CellMarkup.__new__.__defaults__ = ('', False, False, None, False)
 
 
 def mark_up_excel(path, wb, ws_procedure, markup_content: dict, modify_original_file=False):
@@ -131,23 +132,23 @@ def mark_up_excel(path, wb, ws_procedure, markup_content: dict, modify_original_
         CellMarkup("To improve readability, convert notes to comments:"),
         CellMarkup("Go to the Review tab", indent=True),
         CellMarkup("Click on Notes, select Convert to Comments", indent=True),
-    ]
+        CellMarkup(),
+    ] + get_version_check_message()
     if general_errors:
         readme_text += [
                               CellMarkup(),
                               CellMarkup("General Errors:"),
                               CellMarkup(),
                           ] + general_errors
-    # TODO procedure: highlight background instead of applying style. Styles mess things up
 
-    # --- create README sheet -------------------------------------------------
+    # --- create and write to README sheet ------------------------------------
     readme = 'README'
     ws_readme = wb.create_sheet(readme, 0)
     for row, comment in enumerate(readme_text, 1):
         cell = ws_readme.cell(row, 1, comment.comment)
         cell.alignment = Alignment(
             wrapText=False,
-            indent=5 if comment.indent else 0,
+            indent=3 if comment.indent else 0,
         )
         cell.font = Font(
             color=fg_error if comment.is_error else fg_good,
@@ -168,6 +169,8 @@ def mark_up_excel(path, wb, ws_procedure, markup_content: dict, modify_original_
     # --- Save ----------------------------------------------------------------
     save_path = get_save_path(path, modify_original_file)
     wb.save(save_path)
+    os.startfile(save_path)
+    # open(save_path)
 
 
 def row_heights(ws):

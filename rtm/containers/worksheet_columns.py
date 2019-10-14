@@ -32,7 +32,7 @@ class WorksheetColumns:
         # --- Convert Worksheet to WorksheetColumn objects ----------------
         start_column_num = 1
         for position, col in enumerate(range(start_column_num, worksheet.max_column + 1)):
-            column_header = worksheet.cell(config.header_row, col).value
+            column_header = str(worksheet.cell(config.header_row, col).value)
             column_values = tuple(worksheet.cell(row, col).value for row in range(config.header_row+1, self.max_row + 1))
             ws_column = WorksheetColumn(
                 header=column_header, values=column_values, position=position, column=col

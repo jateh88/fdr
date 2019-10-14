@@ -15,6 +15,7 @@ from rtm.containers.fields import Fields
 import rtm.containers.worksheet_columns as wc
 import rtm.containers.work_items as wi
 import rtm.main.context_managers as context
+from rtm.main.versions import print_version_check_message
 
 
 def main(highlight_bool=False, highlight_original=False, path=None):
@@ -25,6 +26,9 @@ def main(highlight_bool=False, highlight_original=False, path=None):
         "\nWelcome to the DePuy Synthes Requirements Trace Matrix (RTM) Validator."
         "\nPlease select an RTM excel file you wish to validate."
     )
+
+    click.echo()
+    print_version_check_message()
 
     if highlight_original:
         highlight_original = click.confirm('Are you sure you want to edit the original excel file? Images, etc will be lost.')
