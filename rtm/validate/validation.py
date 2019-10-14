@@ -392,7 +392,7 @@ def cascade_level_valid_input(field) -> ValidationResult:
         cli_explanation=explanation,
         nonconforming_indices=error_indices,
         markup_type='body',
-        markup_explanation='This cell contains an incorrect value. Choose from the following: {list(allowed_values)}',
+        markup_explanation=f'This cell contains an incorrect value. Choose from the following: {list(allowed_values)}',
     )
 
 
