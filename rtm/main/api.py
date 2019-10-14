@@ -15,6 +15,8 @@ from rtm.containers.fields import Fields
 import rtm.containers.worksheet_columns as wc
 import rtm.containers.work_items as wi
 import rtm.main.context_managers as context
+import pypi_get
+import 
 
 
 def main(highlight_bool=False, highlight_original=False, path=None):
@@ -55,7 +57,7 @@ def main(highlight_bool=False, highlight_original=False, path=None):
     )
 
 
-def version_check() -> str:
+def version_check():
     """Tell user if app is up to date"""
 
     project_info = pypi_get.get("dps-rtm")
