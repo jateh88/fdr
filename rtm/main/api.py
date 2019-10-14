@@ -7,6 +7,7 @@ related to validation errors (e.g. missing columns)"""
 
 # --- Third Party Imports -----------------------------------------------------
 import click
+import pypi_get
 
 # --- Intra-Package Imports ---------------------------------------------------
 import rtm.main.excel as excel
@@ -15,8 +16,7 @@ from rtm.containers.fields import Fields
 import rtm.containers.worksheet_columns as wc
 import rtm.containers.work_items as wi
 import rtm.main.context_managers as context
-import pypi_get
-import 
+from rtm.__init__ import __version__ as current_version
 
 
 def main(highlight_bool=False, highlight_original=False, path=None):
