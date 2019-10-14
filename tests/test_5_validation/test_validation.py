@@ -7,7 +7,6 @@ from collections import namedtuple
 
 # --- Third Party Imports -----------------------------------------------------
 import pytest
-import click
 
 # --- Intra-Package Imports ---------------------------------------------------
 import rtm.validate.validation as val
@@ -18,17 +17,15 @@ from rtm.containers.work_items import WorkItems
 
 # --- General Purpose Validation ----------------------------------------------
 def test_column_exist(capsys):
-    tab_len = 8
     io = [
-        (True, f"\tPass\tFIELD EXIST\n".expandtabs(tab_len)),
-        (False, f"\tError\tFIELD EXIST - Field not found.".expandtabs(tab_len)),
+        (True, f"\tPass\tFIELD EXIST\n"),
+        (False, f"\tError\tFIELD EXIST - Field not found. Make sure your headers exactly match the title shown above.\n"),
     ]
     for item in io:
         result = val.field_exist(item[0])
         result.print()
         captured = capsys.readouterr()
-        captured_should = item[1]
-        assert captured_should in captured.out
+        assert captured.out == item[1]
 
 
 @pytest.mark.parametrize("reverse", [False, True])

@@ -2,7 +2,7 @@
 on. See __init__ for more detail."""
 
 # --- Standard Library Imports ------------------------------------------------
-# None
+from collections import defaultdict, namedtuple
 
 # --- Third Party Imports -----------------------------------------------------
 # None
@@ -10,6 +10,10 @@ on. See __init__ for more detail."""
 # --- Intra-Package Imports ---------------------------------------------------
 import rtm.main.context_managers as context
 from rtm.containers.worksheet_columns import get_matching_worksheet_columns
+from rtm.validate import validator_output
+from rtm.main import config
+from rtm.validate.validator_output import OutputHeader
+import rtm.validate.validation as val
 
 
 class Field:
@@ -72,13 +76,49 @@ class Field:
         different values for left and right positions."""
         return self.position_left
 
+    @property
+    def column(self):
+        return self.position_left + 1
+
     def print(self):
         """Print to console 1) field name and 2) the field's validation results."""
         for result in self._val_results:
             result.print()
 
+    @property
+    def excel_markup(self):
+        """Return dict. Key= row number. Value= List of comments."""
+        markup = defaultdict(list)
+        for val_result in self._val_results[1:]:  # exclude the first item, which is just the header
+            val_result: validator_output.ValidationResult
+            if val_result.score == 'Pass':
+                continue
+            val_type = val_result.excel_type
+            if val_type == 'body':
+                col = self.column
+                comment = (val_result.title, val_result.comment)
+                for row in val_result.rows:
+                    location = (row, col)
+                    markup[location].append(comment)
+            elif val_type == 'header':
+                row = config.header_row
+                col = self.column
+                location = (row, col)
+                comment = (val_result.title, val_result.comment)
+                markup[location].append(comment)
+            elif val_type == 'notes':
+                location = self.name
+                comment = (val_result.title, val_result.comment)
+                markup[location].append(comment)
+            else:
+                raise ValueError(f"{val_type} is not a valid validation type.")
+        return markup
+
     def __str__(self):
         return self.__class__, self.found
+
+    def val_results_header_and_field_exists(self):
+        return [OutputHeader(self.name), val.field_exist(self.found, self.name)]
 
 
 if __name__ == "__main__":

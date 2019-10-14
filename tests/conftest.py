@@ -10,6 +10,7 @@ from rtm.containers.fields import Fields
 import rtm.main.context_managers as context
 from rtm.containers.worksheet_columns import WorksheetColumns
 from rtm.containers.work_items import WorkItems
+import rtm.main.excel as excel
 
 
 # --- Worksheet Path ----------------------------------------------------------
@@ -26,8 +27,10 @@ def fix_path() -> Path:
 # --- Worksheet Columns -------------------------------------------------------
 @functools.lru_cache()
 def get_worksheet_columns(worksheet_name):
-    with context.path.set(get_rtm_path()):
-        return WorksheetColumns(worksheet_name)
+    path = get_rtm_path()
+    wb = excel.get_workbook(path)
+    ws = excel.get_worksheet(wb, worksheet_name)
+    return WorksheetColumns(ws)
 
 
 @pytest.fixture(scope="session")

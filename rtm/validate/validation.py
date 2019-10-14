@@ -19,17 +19,23 @@ from rtm.containers.work_items import MissingWorkItem
 
 
 # --- General-purpose validation ----------------------------------------------
-def field_exist(field_found) -> ValidationResult:
+def field_exist(field_found, field_name=None) -> ValidationResult:
     """Given field_found=True/False, return a ValidationResult, ready to be
     printed to console."""
-    title = "Field Exist"
+
     if field_found:
         score = "Pass"
         explanation = None
     else:
         score = "Error"
         explanation = "Field not found. Make sure your headers exactly match the title shown above."
-    return ValidationResult(score, title, explanation)
+    return ValidationResult(
+        score=score,
+        title="Field Exist",
+        cli_explanation=explanation,
+        markup_type='notes',
+        markup_explanation=f"Field not found. Make sure your header matches '{field_name}' exactly.",
+    )
 
 
 def left_right_order(field_self) -> ValidationResult:
@@ -53,12 +59,11 @@ def left_right_order(field_self) -> ValidationResult:
     else:
         score = "Error"
         explanation = f"This field should come after {field_left.name}"
-    return ValidationResult(score, title, explanation)
+    return ValidationResult(score, title, explanation, markup_type='header')
 
 
 def not_empty(values) -> ValidationResult:
     """All cells must be non-empty"""
-    title = "Not Empty"
     error_indices = []
     for index, value in enumerate(values):
         if checks.cell_empty(value):
@@ -69,7 +74,14 @@ def not_empty(values) -> ValidationResult:
     else:
         score = "Error"
         explanation = "Action Required. The following rows are blank: "
-    return ValidationResult(score, title, explanation, error_indices)
+    return ValidationResult(
+        score,
+        title="Not Empty",
+        cli_explanation=explanation,
+        nonconforming_indices=error_indices,
+        markup_type='body',
+        markup_explanation='This cell must contain a value.'
+    )
 
 
 # --- ID ----------------------------------------------------------------------
@@ -98,7 +110,7 @@ def procedure_step_format(id_values, work_items):
     else:
         score = "Error"
         explanation = "The following Procedure Step IDs do not follow the 'PXYZ' format: "
-    return ValidationResult(score, title, explanation, error_indices)
+    return ValidationResult(score, title, explanation, error_indices, markup_type='body')
 
 
 def unique(values):
@@ -126,7 +138,7 @@ def unique(values):
         score = "Error"
         explanation = "The following rows contain duplicate IDs: "
 
-    return ValidationResult(score, title, explanation, error_indices)
+    return ValidationResult(score, title, explanation, error_indices, markup_type='body')
 
 
 def start_w_root_id():
@@ -158,7 +170,7 @@ def start_w_root_id():
     else:
         score = "Error"
         explanation = "Each parent/child pair must use the same prefix (e.g. 'P010-'). The following rows don't: "
-    return ValidationResult(score, title, explanation, error_indices)
+    return ValidationResult(score, title, explanation, error_indices, markup_type='body')
 
 
 # @functools.lru_cache()
@@ -181,7 +193,7 @@ def alphabetical_sort(values):
     else:
         score = "Error"
         explanation = "The following rows are not in alphabetical order: "
-    return ValidationResult(score, title, explanation, error_indices)
+    return ValidationResult(score, title, explanation, error_indices, markup_type='body')
 
 
 # --- Cascade Block -----------------------------------------------------------
@@ -201,17 +213,11 @@ def cascade_block_not_empty() -> ValidationResult:
         explanation = (
             "Action Required. The following rows have blank cascade blocks: "
         )
-    return ValidationResult(score, title, explanation, error_indices)
+    return ValidationResult(score, title, explanation, error_indices, markup_type='body')
 
 
 def single_entry() -> ValidationResult:
     """Each row in cascade block must contain only one entry"""
-    title = "Single Entry"
-    # indices = []
-    # for work_item in context.work_items.get():
-    #     _len = len(work_item.cascade_block)
-    #     if _len != 1:
-    #         indices.append(work_item.index)
 
     error_indices = [
         work_item.index
@@ -226,7 +232,14 @@ def single_entry() -> ValidationResult:
         explanation = (
             "Action Required. The following rows are blank or have multiple entries: "
         )
-    return ValidationResult(score, title, explanation, error_indices)
+    return ValidationResult(
+        score,
+        title='Single Entry',
+        cli_explanation=explanation,
+        nonconforming_indices=error_indices,
+        markup_type='body',
+        markup_explanation='This Cascade Block contains more than one entry.'
+    )
 
 
 def use_all_columns() -> ValidationResult:
@@ -257,7 +270,7 @@ def use_all_columns() -> ValidationResult:
         score = "Warning"
         explanation = f"Some cascade levels are unused"
 
-    return ValidationResult(score, title, explanation)
+    return ValidationResult(score, title, explanation, markup_type='header')
 
 
 def orphan_work_items() -> ValidationResult:
@@ -265,7 +278,7 @@ def orphan_work_items() -> ValidationResult:
     score = "Pass"
     explanation = "Each work item must trace back to a procedure step. " \
                   "This check is not yet implemented. This is a placeholder."
-    return ValidationResult(score, title, explanation)
+    return ValidationResult(score, title, explanation, markup_type='body')
 
 
 @functools.lru_cache()
@@ -282,14 +295,20 @@ def solution_level_terminal() -> ValidationResult:
     ]
 
     # Output
-    title = "Terminal Items"
     if not error_indices:
         score = "Pass"
         explanation = f"All Terminal Work Items are of Cascade Level `Solution Level`"
     else:
         score = "Error"
         explanation = f"The following rows terminate a cascade path prior to Solution Level: "
-    return ValidationResult(score, title, explanation, error_indices)
+    return ValidationResult(
+        score=score,
+        title="Terminal Items",
+        cli_explanation=explanation,
+        nonconforming_indices=error_indices,
+        markup_type='body',
+        markup_explanation='This item should have at least one child.'
+    )
 
 
 def f_entry() -> ValidationResult:
@@ -313,7 +332,7 @@ def f_entry() -> ValidationResult:
     else:
         score = "Error"
         explanation = f"The following rows have a value other than `F`: "
-    return ValidationResult(score, title, explanation, error_indices)
+    return ValidationResult(score, title, explanation, error_indices, markup_type='body')
 
 
 def x_entry() -> ValidationResult:
@@ -343,7 +362,7 @@ def x_entry() -> ValidationResult:
     score = "Pass"
     explanation = "All other work items are marked with an `X`. " \
                   "This check is not yet implemented. This is a placeholder."
-    return ValidationResult(score, title, explanation)
+    return ValidationResult(score, title, explanation, markup_type='body')
 
 
 # --- Cascade Level -----------------------------------------------------------
@@ -351,23 +370,30 @@ def cascade_level_valid_input(field) -> ValidationResult:
     """Check cascade levels against list of acceptable entries."""
 
     values = field.values
+    allowed_values = checks.allowed_cascade_levels.keys()
     error_indices = [
         index
         for index, value in enumerate(values)
         if not checks.cell_empty(value)
-           and value not in checks.allowed_cascade_levels.keys()
+           and value not in allowed_values
     ]
 
     # Output
-    title = 'Valid Input'
     if not error_indices:
         score = "Pass"
         explanation = "All cell values are valid"
     else:
         score = "Error"
         explanation = f'The following cells contain values other than the allowed' \
-                      f'\n\t\t\t{list(checks.allowed_cascade_levels.keys())}:\n\t\t\t'
-    return ValidationResult(score, title, explanation, error_indices)
+                      f'\n\t\t\t{list(allowed_values)}:\n\t\t\t'
+    return ValidationResult(
+        score,
+        title='Valid Input',
+        cli_explanation=explanation,
+        nonconforming_indices=error_indices,
+        markup_type='body',
+        markup_explanation='This cell contains an incorrect value. Choose from the following: {list(allowed_values)}',
+    )
 
 
 def cascade_block_match() -> ValidationResult:
@@ -404,7 +430,7 @@ def cascade_block_match() -> ValidationResult:
     else:
         score = "Error"
         explanation = f'The following rows do not match the cascade position marked in the Cascade Block:'
-    return ValidationResult(score, title, explanation, error_indices)
+    return ValidationResult(score, title, explanation, error_indices, markup_type='body')
 
 
 # --- Requirement Statement ---------------------------------------------------
@@ -430,7 +456,7 @@ def missing_tags() -> ValidationResult:
         score = 'Warning'
         explanation = f'These base tags were found: {list(tags.base_found)}. ' \
                       f'These were missing: {list(tags.missing)}'
-    val_result = ValidationResult(score, title, explanation)
+    val_result = ValidationResult(score, title, explanation, markup_type='header')
     val_result.base_found = sorted(list(tags.base_found))
     val_result.missing = sorted(list(tags.missing))
     return val_result
@@ -454,7 +480,7 @@ def custom_tags() -> ValidationResult:
         score = 'Warning'
         explanation = f"These custom tags were found: {list(tags.additional)}. " \
                       f"Make sure you didn't mean to use one of the base tags: {list(tags.base)}"
-    val_result = ValidationResult(score, title, explanation)
+    val_result = ValidationResult(score, title, explanation, markup_type='header')
     val_result.custom = sorted(list(tags.additional))
     return val_result
 
@@ -481,7 +507,7 @@ def parent_child_modifiers() -> ValidationResult:
     else:
         score = "Error"
         explanation = "The following rows have #AdditionalParent and #Child tags that don't match to any existing IDs: "
-    return ValidationResult(score, title, explanation, error_indices)
+    return ValidationResult(score, title, explanation, error_indices, markup_type='body')
 
 
 def mutual_parent_child() -> ValidationResult:
@@ -512,7 +538,7 @@ def mutual_parent_child() -> ValidationResult:
     else:
         score = "Error"
         explanation = f"The following rows have {tags_string} tags that don't have a matching tag pointing back: "
-    return ValidationResult(score, title, explanation, error_indices)
+    return ValidationResult(score, title, explanation, error_indices, markup_type='body')
 
 
 # --- VorV Strategy, Results --------------------------------------------------
@@ -525,7 +551,7 @@ def business_need_na(values) -> ValidationResult:
     score = 'Pass'
     explanation = "Business Need work items are marked with 'N/A'. " \
                   "This check is not yet implemented. This is a placeholder."
-    return ValidationResult(score, title, explanation)
+    return ValidationResult(score, title, explanation, markup_type='body')
 
 
 # --- DO Features -------------------------------------------------------------
@@ -538,7 +564,7 @@ def ctq_format(values) -> ValidationResult:
     score = 'Pass'
     explanation = "If contains features that are CTQs, CTQ ID should be formatted as `CTQ##`. " \
                   "This check is not yet implemented. This is a placeholder."
-    return ValidationResult(score, title, explanation)
+    return ValidationResult(score, title, explanation, markup_type='body')
 
 
 def missing_ctq(values) -> ValidationResult:
@@ -550,7 +576,7 @@ def missing_ctq(values) -> ValidationResult:
     score = 'Pass'
     explanation = "If CTQ Y/N is `yes`, this column must contain at least one CTQ. " \
                   "This check is not yet implemented. This is a placeholder."
-    return ValidationResult(score, title, explanation)
+    return ValidationResult(score, title, explanation, markup_type='body')
 
 
 # --- CTQ Y/N -----------------------------------------------------------------
@@ -564,7 +590,7 @@ def ctq_valid_input(values) -> ValidationResult:
     explanation = "The only valid inputs for this column are ['yes', 'no', 'N/A', '-']. " \
                   "This check is not yet implemented. This is a placeholder."
     #  Note: only the procedure step can have a `-`
-    return ValidationResult(score, title, explanation)
+    return ValidationResult(score, title, explanation, markup_type='body')
 
 
 def ctq_to_yes(values) -> ValidationResult:
@@ -576,7 +602,7 @@ def ctq_to_yes(values) -> ValidationResult:
     score = 'Pass'
     explanation = "Must be 'yes'if the DO Features column contains a CTQ. " \
                   "This check is not yet implemented. This is a placeholder."
-    return ValidationResult(score, title, explanation)
+    return ValidationResult(score, title, explanation, markup_type='body')
 
 
 if __name__ == "__main__":

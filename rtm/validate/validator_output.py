@@ -3,14 +3,14 @@ ready to be printed to the terminal at the conclusion of the app."""
 
 # --- Standard Library Imports ------------------------------------------------
 import abc
-from typing import List
+from collections import namedtuple
 from itertools import groupby, count
 
 # --- Third Party Imports -----------------------------------------------------
 import click
 
 # --- Intra-Package Imports ---------------------------------------------------
-# None
+import rtm.main.config as config
 
 
 class ValidatorOutput(metaclass=abc.ABCMeta):
@@ -19,15 +19,46 @@ class ValidatorOutput(metaclass=abc.ABCMeta):
         return
 
 
+def pretty_int_list(numbers) -> str:
+    def as_range(iterable):
+        """Convert list of integers to an easy-to-read string. Used to display the
+    on the console the rows that failed validation."""
+        list_int = list(iterable)
+        if len(list_int) > 1:
+            return f'{list_int[0]}-{list_int[-1]}'
+        else:
+            return f'{list_int[0]}'
+
+    return ', '.join(as_range(g) for _, g in groupby(numbers, key=lambda n, c=count(): n-next(c)))
+
+
+CellResult = namedtuple("CellResult", "row title comment")
+
+
 class ValidationResult(ValidatorOutput):
     """Each validation function returns an instance of this class. Calling its
     print() function prints a standardized output to the console."""
-    def __init__(self, score, title, explanation=None, nonconforming_indices=None):
+    def __init__(self,
+                 score,
+                 title,
+                 cli_explanation=None,
+                 nonconforming_indices=None,
+                 markup_explanation=None,
+                 markup_type='body',  # other options: 'header', 'notes'
+                 ):
         self._scores_and_colors = {'Pass': 'green', 'Warning': 'yellow', 'Error': 'red'}
         self.score = score
-        self._title = title
-        self._explanation = explanation
+        self.title = title
+        self._explanation = cli_explanation
         self.indices = nonconforming_indices
+        self._comment = markup_explanation
+        self.excel_type = markup_type
+
+    @property
+    def comment(self):
+        if self._comment is None:
+            return self._explanation
+        return self._comment
 
     @property
     def indices(self):
@@ -55,62 +86,29 @@ class ValidationResult(ValidatorOutput):
 
     @property
     def rows(self):
-        first_row = 2  # this is the row # directly after the headers
-        return [index + first_row for index in self.indices]
-
-    @staticmethod
-    def _pretty_int_list(numbers) -> str:
-        def as_range(iterable):
-            """Convert list of integers to an easy-to-read string. Used to display the
-            on the console the rows that failed validation."""
-            list_int = list(iterable)
-            if len(list_int) > 1:
-                return f'{list_int[0]}-{list_int[-1]}'
-            else:
-                return f'{list_int[0]}'
-        return ', '.join(as_range(g) for _, g in groupby(numbers, key=lambda n, c=count(): n-next(c)))
-
-    @property
-    def pretty_rows(self):
-        return self._pretty_int_list(self.rows)
+        first_body_row = 1 + config.header_row  # this is the row # directly after the headers
+        return [index + first_body_row for index in self.indices]
 
     def print(self) -> None:
-
-        # --- Setup -----------------------------------------------------------
-        tab_character_width = 8
-        title_indent_len = 2 * tab_character_width
-        terminal_width = click.get_terminal_size()[0]
-        max_output_width = terminal_width - 20
-
-        # --- Print Score in Color --------------------------------------------
-        click.secho(
-            f"\t{self.score}\t".expandtabs(tab_character_width),
-            fg=self._get_color(),
-            bold=True,
-            nl=False
-        )
-
-        # --- Print Rule Title ------------------------------------------------
+        # --- Print Score in Color ------------------------------------------------
+        click.secho(f"\t{self.score}", fg=self._get_color(), bold=True, nl=False)
+        # --- Print Rule Title ----------------------------------------------------
+        click.secho(f"\t{self.title.upper()}", bold=True, nl=False)
+        # --- Print Explanation (and Rows) ----------------------------------------
         if self._explanation:
-            title = f'{self._title} - '.upper()
-            click.secho(title.upper(), bold=True, nl=False)
-        else:
-            title = self._title.upper()
-            click.secho(title, bold=True)
-            return
 
-        # --- Print Explanation (and Rows) ------------------------------------
+            click.secho(f' - {self._explanation}{pretty_int_list(self.rows)}', nl=False)
+        click.echo()  # new line
 
-        initial_indent_len = len(f'{title}') + title_indent_len
-        initial_indent = ' ' * initial_indent_len
-        explanation = f'{self._explanation.strip()} {self.pretty_rows}'
-        explanation_wrapped = click.wrap_text(
-            explanation,
-            width=max_output_width,
-            initial_indent=initial_indent,
-            subsequent_indent=' '*title_indent_len
-        ).strip()
-        click.echo(explanation_wrapped)
+    @property
+    def title_and_comment(self):
+        return f'{self.title.upper()}\n{self.comment}'
+    # def highlight_output(self):
+    #     cell_results = []
+    #     for row in self.rows:
+    #         cell_result = CellResult(row=row, title=self.title, comment=self._explanation)
+    #         cell_results.append(cell_result)
+    #     return cell_results
 
 
 class OutputHeader(ValidatorOutput):
