@@ -200,14 +200,9 @@ v 0.1.22
 
 v 0.1.23
 ''''''''''''
-<<<<<<< HEAD
-* implement max width on output
-* version check
+* add upgrade instruction to readme
 
 v 0.1.24
 ''''''''''''
 * text wrap
 * version check
-=======
-* add upgrade instruction to readme
->>>>>>> master
