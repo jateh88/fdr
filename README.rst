@@ -202,7 +202,7 @@ v 0.1.23
 ''''''''''''
 * add upgrade instruction to readme
 
-v 0.1.24
+v 0.1.25
 ''''''''''''
 * text wrap
 * version check
