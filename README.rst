@@ -197,3 +197,7 @@ v 0.1.17
 v 0.1.22
 ''''''''''''
 * add excel markup
+
+v 0.1.23
+''''''''''''
+* add upgrade instruction to readme
