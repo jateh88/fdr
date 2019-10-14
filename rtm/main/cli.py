@@ -11,8 +11,16 @@ import click
 from rtm.main import api
 
 
-@click.command()
-@click.option('-V', '--version', is_flag=True, help="Show version and exit.")
-def main(version):
-    """RTM Validator checks your RTM worksheet for common errors."""
-    api.main(version=version)
+@click.group(invoke_without_command=True)
+@click.pass_context
+def main(ctx):
+    """`rtm` on the command line will run the this function. Later, this will
+    have more functionality. That's why it appear superfluous right now"""
+    if ctx.invoked_subcommand is None:
+        api.main()
+
+
+@main.command()
+@click.option('--original', '-o', is_flag=True)
+def highlight(original):
+    api.main(True, original)

@@ -22,9 +22,8 @@ def test_validation_result(capsys):
     captured = capsys.readouterr()
 
     # --- Compare to expected
-    partial_expected_capture = '\tError\tYOU FAIL'.expandtabs(8)
-    assert validation_result.pretty_rows == '2-6'
-    assert partial_expected_capture in captured.out
+    expected_capture = '\tError\tYOU FAIL - here are the rows that failed: 3-7\n'
+    assert captured.out == expected_capture
 
 
 def test_output_header(capsys):

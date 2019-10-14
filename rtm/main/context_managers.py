@@ -35,7 +35,6 @@ class ContextManager:
             return self._value
 
 
-path = ContextManager('path')
 worksheet_columns = ContextManager('worksheet_columns')
 fields = ContextManager('fields')
 work_items = ContextManager('work_items')
