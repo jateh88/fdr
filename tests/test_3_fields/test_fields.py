@@ -45,7 +45,11 @@ def test_fields_not_found(fix_fields):
     """Fields should all initialize to 'not found'"""
     fields = fix_fields("nonsense_fields")
     result_actual = [field.found for field in fields]
-    result_expected = [False] * len(fields)
+    result_expected = [
+        True if field.name == 'ID' else False
+        for field in fields
+    ]
+    # result_expected = [False] * len(fields)
     assert result_actual == result_expected
 
 
