@@ -71,7 +71,7 @@ def set_header_row(worksheet):
     seeking_value = 'ID'
     for row in range(1, 31):
         for col in range(1, 31):
-            val = worksheet.cell[row, col].value
+            val = worksheet.cell(row, col).value
             if isinstance(val, str) and val.lower() == seeking_value.lower():
                 config.header_row = row
                 return row
