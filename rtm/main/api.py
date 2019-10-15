@@ -7,7 +7,7 @@ related to validation errors (e.g. missing columns)"""
 
 # --- Third Party Imports -----------------------------------------------------
 import click
-import pypi_get
+import requests
 
 # --- Intra-Package Imports ---------------------------------------------------
 import rtm.main.excel as excel
@@ -60,9 +60,11 @@ def main(highlight_bool=False, highlight_original=False, path=None):
 def version_check():
     """Tell user if app is up to date"""
 
-    project_info = pypi_get.get("dps-rtm")
-    pypi_version = project_info['info']['version']
+    # --- get pypi version ----------------------------------------------------
+    response = requests.get("https://pypi.org/pypi/dps-rtm/json")
+    pypi_version = response['info']['version']
 
+    # --- print message -------------------------------------------------------
     if pypi_version == current_version:
         click.echo(f"\nYour app is up to date ({current_version})")
     else:
