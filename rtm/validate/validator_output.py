@@ -96,7 +96,6 @@ class ValidationResult(ValidatorOutput):
         click.secho(f"\t{self.title.upper()}", bold=True, nl=False)
         # --- Print Explanation (and Rows) ----------------------------------------
         if self._explanation:
-
             click.secho(f' - {self._explanation}{pretty_int_list(self.rows)}', nl=False)
         click.echo()  # new line
 
