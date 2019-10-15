@@ -6,6 +6,7 @@ import datetime
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog
+import functools
 
 # --- Third Party Imports -----------------------------------------------------
 import click
@@ -17,6 +18,7 @@ from openpyxl.comments import Comment
 from rtm.containers.markup import CellMarkup
 from rtm.main import exceptions as exc
 from rtm.main.versions import get_version_check_message
+from rtm.containers.fields import Fields
 
 
 def get_rtm_path(path_option='default') -> Path:

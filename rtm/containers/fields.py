@@ -29,7 +29,7 @@ class Fields(collections.abc.Sequence):
 
         return decorator
 
-    # --- Field Object Methods
+    # --- Field Object Methods ------------------------------------------------
     def __init__(self):
         """The Fields class is a sequence of fields. First, the field classes
         are collected in the order they're expected to appear in the RTM via
@@ -68,8 +68,6 @@ class Fields(collections.abc.Sequence):
             for key, value in field.excel_markup.items():
                 comments[key] += value
         return comments
-
-
 
     # --- Sequence ------------------------------------------------------------
     def __getitem__(self, item):

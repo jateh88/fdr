@@ -63,3 +63,23 @@ def get_matching_worksheet_columns(sequence_worksheet_columns, field_name) -> Li
         if ws_col.header.lower() == field_name.lower()
     ]
     return matching_worksheet_columns
+
+
+def set_header_row(worksheet):
+    """Return row number of first row to contain case-insensitive 'id' in the first 30 columns."""
+    seeking_value = 'ID'
+    for row in range(1, 31):
+        for col in range(1, 31):
+            val = worksheet.cell[row, col].value
+            if isinstance(val, str) and val.lower() == seeking_value.lower():
+                pass
+
+
+
+    for position, col in enumerate(range(start_column_num, worksheet.max_column + 1)):
+        column_header = worksheet.cell(config.header_row, col).value
+        column_values = tuple(worksheet.cell(row, col).value for row in range(config.header_row+1, self.max_row + 1))
+        ws_column = WorksheetColumn(
+            header=column_header, values=column_values, position=position, column=col
+        )
+        self.cols.append(ws_column)
