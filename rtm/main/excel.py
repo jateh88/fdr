@@ -6,17 +6,17 @@ import datetime
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog
-import openpyxl
-from openpyxl.styles import Alignment, Color, Font, PatternFill
-import collections
 
 # --- Third Party Imports -----------------------------------------------------
 import click
-
-# --- Intra-Package Imports ---------------------------------------------------
+import openpyxl
+from openpyxl.styles import Alignment, Color, Font, PatternFill
 from openpyxl.comments import Comment
 
+# --- Intra-Package Imports ---------------------------------------------------
+from rtm.containers.markup import CellMarkup
 from rtm.main import exceptions as exc
+from rtm.main.versions import get_version_check_message
 
 
 def get_rtm_path(path_option='default') -> Path:
@@ -85,12 +85,6 @@ def get_cell_comment_string(comments):
     return f"{now_str(pretty=True)}\n\n{comments_string}"
 
 
-CellMarkup = collections.namedtuple("CellMarkup", "comment is_error indent size is_bold")
-# is_error will drive what color to highlight the cell (e.g. green for neutral and orange for error)
-# indent: indent the cell contents if true
-CellMarkup.__new__.__defaults__ = ('', False, False, None, False)
-
-
 def mark_up_excel(path, wb, ws_procedure, markup_content: dict, modify_original_file=False):
     # Comments fall in two categories:
     #   PROCEDURE BASED REQUIREMENTS: These are comments bound to record in a specific field.
@@ -131,23 +125,23 @@ def mark_up_excel(path, wb, ws_procedure, markup_content: dict, modify_original_
         CellMarkup("To improve readability, convert notes to comments:"),
         CellMarkup("Go to the Review tab", indent=True),
         CellMarkup("Click on Notes, select Convert to Comments", indent=True),
-    ]
+        CellMarkup(),
+    ] + get_version_check_message()
     if general_errors:
         readme_text += [
                               CellMarkup(),
                               CellMarkup("General Errors:"),
                               CellMarkup(),
                           ] + general_errors
-    # TODO procedure: highlight background instead of applying style. Styles mess things up
 
-    # --- create README sheet -------------------------------------------------
+    # --- create and write to README sheet ------------------------------------
     readme = 'README'
     ws_readme = wb.create_sheet(readme, 0)
     for row, comment in enumerate(readme_text, 1):
         cell = ws_readme.cell(row, 1, comment.comment)
         cell.alignment = Alignment(
             wrapText=False,
-            indent=5 if comment.indent else 0,
+            indent=3 if comment.indent else 0,
         )
         cell.font = Font(
             color=fg_error if comment.is_error else fg_good,

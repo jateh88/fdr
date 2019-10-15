@@ -7,7 +7,6 @@ related to validation errors (e.g. missing columns)"""
 
 # --- Third Party Imports -----------------------------------------------------
 import click
-import requests
 
 # --- Intra-Package Imports ---------------------------------------------------
 import rtm.main.excel as excel
@@ -16,7 +15,7 @@ from rtm.containers.fields import Fields
 import rtm.containers.worksheet_columns as wc
 import rtm.containers.work_items as wi
 import rtm.main.context_managers as context
-from rtm.__init__ import __version__ as current_version
+from rtm.main.versions import print_version_check_message
 
 
 def main(highlight_bool=False, highlight_original=False, path=None):
@@ -28,7 +27,8 @@ def main(highlight_bool=False, highlight_original=False, path=None):
         "\nPlease select an RTM excel file you wish to validate."
     )
 
-    version_check()
+    click.echo()
+    print_version_check_message()
 
     if highlight_original:
         highlight_original = click.confirm('Are you sure you want to edit the original excel file? Images, etc will be lost.')
@@ -55,28 +55,6 @@ def main(highlight_bool=False, highlight_original=False, path=None):
         "\nThank you for using the RTM Validator."
         "\nIf you have questions or suggestions, please contact a Roebling team member.\n"
     )
-
-
-def version_check():
-    """Tell user if app is up to date"""
-
-    # --- get pypi version ----------------------------------------------------
-    response = requests.get("https://pypi.org/pypi/dps-rtm/json")
-    pypi_version = response['info']['version']
-
-    # --- print message -------------------------------------------------------
-    if pypi_version == current_version:
-        click.echo(f"\nYour app is up to date ({current_version})")
-    else:
-        click.secho(
-            "\nYour app is out of date.",
-            fg='red',
-            bold=True,
-        )
-        click.echo(f"Currently installed: {current_version}")
-        click.echo(f"Available: {pypi_version}")
-        click.echo("Upgrade to the latest by entering the following:")
-        click.echo(f"pip install --upgrade dps-rtm")
 
 
 if __name__ == "__main__":
