@@ -14,13 +14,22 @@ from rtm.main import api
 @click.group(invoke_without_command=True)
 @click.pass_context
 def main(ctx):
-    """`rtm` on the command line will run the this function. Later, this will
-    have more functionality. That's why it appear superfluous right now"""
+    """Type ``rtm`` on the command line to run the RTM Validator.
+
+    Here are some other commands to try:
+
+    ``rtm markup`` to print the RTM Validator results to a copy of your original RTM worksheet.
+
+    ``rtm markup --help`` to see additional options and commands available to the ``rtm markup`` command, such as...
+
+    ``rtm markup --original`` to have the RTM Validator mark up your original RTM file.
+    """
     if ctx.invoked_subcommand is None:
         api.main()
 
 
 @main.command()
-@click.option('--original', '-o', is_flag=True)
-def highlight(original):
+@click.option('--original', '-o', is_flag=True, help='Save markup to original file')
+def markup(original):
+    """Markup a RTM worksheet. Problem cells get highlighted and commented. README tab gives add'l info."""
     api.main(True, original)

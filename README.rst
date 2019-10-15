@@ -206,3 +206,4 @@ v 0.1.25
 ''''''''''''
 * version check
 * save excel sheets to subdirectory
+* rename highlight to markup?
