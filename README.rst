@@ -206,4 +206,5 @@ v 0.1.25
 ''''''''''''
 * version check
 * save excel sheets to subdirectory
-* rename highlight to markup?
+* rename highlight to markup
+* Header row can be on any row (within reason)?
