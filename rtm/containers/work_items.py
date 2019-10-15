@@ -187,13 +187,3 @@ class WorkItems(collections.abc.Sequence):
 
 if __name__ == "__main__":
     pass
-    # class TestThingee:
-    #     def __init__(self):
-    #         self.stuff = 1
-    #
-    #     @property
-    #     def stuff(self):
-    #         return 2
-    #
-    # thingee = TestThingee()
-    # print(thingee.stuff)

@@ -11,9 +11,9 @@ from collections import defaultdict, namedtuple
 import rtm.main.context_managers as context
 from rtm.containers.worksheet_columns import get_matching_worksheet_columns
 from rtm.validate import validator_output
-from rtm.main import config
 from rtm.validate.validator_output import OutputHeader
 import rtm.validate.validation as val
+from  rtm.containers import worksheet_columns
 
 
 class Field:
@@ -43,14 +43,24 @@ class Field:
             # From first matching column, get cell values for rows 2+
             # Get first matching column data
             # Duplicate columns are ignored; user receives warning.
-            self.values = matching_worksheet_columns[0].values
+            first_worksheet_column = matching_worksheet_columns[0]
+            first_worksheet_column: worksheet_columns.WorksheetColumn
+            self.worksheet_column = first_worksheet_column
+            self.values = first_worksheet_column.values
         else:
             self._positions = None
             self.values = None
+            self.worksheet_column = None
 
         # --- Set up for validation -------------------------------------------
         self._correct_position = None
         self._val_results = []
+
+    @property
+    def header_row(self):
+        if self.found:
+            return self.worksheet_column.header_row
+        return None
 
     @property
     def found(self):
@@ -83,7 +93,7 @@ class Field:
     def print(self):
         """Print to console 1) field name and 2) the field's validation results."""
         for result in self._val_results:
-            result.print()
+            result.print(self.header_row)
 
     @property
     def excel_markup(self):
@@ -97,11 +107,11 @@ class Field:
             if val_type == 'body':
                 col = self.column
                 comment = (val_result.title, val_result.comment)
-                for row in val_result.rows:
+                for row in val_result.rows(self.header_row):
                     location = (row, col)
                     markup[location].append(comment)
             elif val_type == 'header':
-                row = config.header_row
+                row = self.header_row
                 col = self.column
                 location = (row, col)
                 comment = (val_result.title, val_result.comment)

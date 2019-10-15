@@ -35,8 +35,13 @@ class Fields(collections.abc.Sequence):
         are collected in the order they're expected to appear in the RTM via
         the `collect_field` decorator. When initialized, all fields in the
         sequence get initialized too."""
-        self.height = context.worksheet_columns.get().height  # height is the number of rows of values.
+        self.worksheet_columns = context.worksheet_columns.get()
+        # self.height = context.worksheet_columns.get().height  # height is the number of rows of values.
         self._fields = [field_class() for field_class in self.field_classes]
+
+    @property
+    def height(self):
+        return self.worksheet_columns.worksheet_info.height
 
     def get_field_object(self, field_class):
         """Given a field class or name of field class, return the matching
@@ -339,7 +344,7 @@ class ReqStatement(ft.Field):
         if self.found:
             self._val_results += [
                 val.left_right_order(self),  # LEFT/RIGHT ORDER
-                val.not_empty(self.values),  # NOT EMPTY
+                val.not_empty(self.values),
                 val.missing_tags(),  # MISSING TAGS
                 val.custom_tags(),  # CUSTOM TAGS
                 val.parent_child_modifiers(),  # PARENT/CHILD MODIFIERS

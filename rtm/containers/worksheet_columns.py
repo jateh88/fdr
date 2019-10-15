@@ -10,11 +10,13 @@ from typing import List
 # None
 
 # --- Intra-Package Imports ---------------------------------------------------
-import rtm.main.config as config
 from rtm.main.exceptions import RTMValidatorError
 
 
-WorksheetColumn = namedtuple("WorksheetColumn", "header values position column")
+WorksheetInfo = namedtuple('WorksheetInfo', 'header_row max_row max_col height')
+
+
+WorksheetColumn = namedtuple("WorksheetColumn", "header values position column worksheet_info")
 # header: row 1
 # values: list of cell values starting at row 2
 # position: similar to column number, but starts as zero, like an index
@@ -26,20 +28,34 @@ class WorksheetColumns:
     def __init__(self, worksheet):
 
         # --- Attributes ------------------------------------------------------
-        self.max_row = worksheet.max_row
-        self.height = self.max_row - set_header_row(worksheet)
-        self.cols = []
+        max_row = worksheet.max_row
+        header_row = get_header_row(worksheet)
+        max_col = worksheet.max_column
+        self.worksheet_info = WorksheetInfo(
+            header_row=header_row,
+            max_row=max_row,
+            max_col=max_col,
+            height=max_row - header_row,
+        )
+        self._worksheet_columns = []
 
-        # --- Convert Worksheet to WorksheetColumn objects ----------------
-        start_column_num = 1
-        for position, col in enumerate(range(start_column_num, worksheet.max_column + 1)):
-            header_val = worksheet.cell(config.header_row, col).value
+        # --- Convert Worksheet to WorksheetColumn objects --------------------
+        for position in range(max_col):
+            col = position + 1
+            header_val = worksheet.cell(header_row, col).value
             column_header = str(header_val)
-            column_values = tuple(worksheet.cell(row, col).value for row in range(config.header_row+1, self.max_row + 1))
-            ws_column = WorksheetColumn(
-                header=column_header, values=column_values, position=position, column=col
+            column_values = tuple(
+                worksheet.cell(row, col).value
+                for row in range(header_row+1, max_row + 1)
             )
-            self.cols.append(ws_column)
+            ws_column = WorksheetColumn(
+                header=column_header,
+                values=column_values,
+                position=position,
+                column=col,
+                worksheet_info=self.worksheet_info
+            )
+            self._worksheet_columns.append(ws_column)
 
     def get_first(self, header_name):
         """returns the first worksheet_column that matches the header"""
@@ -51,10 +67,10 @@ class WorksheetColumns:
 
     # --- Sequence ------------------------------------------------------------
     def __getitem__(self, index):
-        return self.cols[index]
+        return self._worksheet_columns[index]
 
     def __len__(self):
-        return len(self.cols)
+        return len(self._worksheet_columns)
 
 
 def get_matching_worksheet_columns(sequence_worksheet_columns, field_name) -> List[WorksheetColumn]:
@@ -67,13 +83,12 @@ def get_matching_worksheet_columns(sequence_worksheet_columns, field_name) -> Li
     return matching_worksheet_columns
 
 
-def set_header_row(worksheet):
+def get_header_row(worksheet):
     """Return row number of first row to contain case-insensitive 'id' in the first 30 columns."""
     seeking_value = 'ID'
     for row in range(1, 31):
         for col in range(1, 31):
             val = worksheet.cell(row, col).value
             if isinstance(val, str) and val.lower() == seeking_value.lower():
-                config.header_row = row
                 return row
     raise RTMValidatorError("Header 'ID' not found.")

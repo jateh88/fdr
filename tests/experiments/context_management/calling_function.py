@@ -1,4 +1,4 @@
-from tests.experiements.context_management import custom_class as cc
+from tests.experiments.context_management import custom_class as cc
 
 doubler = cc.Doubler()
 with cc.set_count(2):

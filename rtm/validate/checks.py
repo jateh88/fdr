@@ -3,13 +3,13 @@ the RTM Validator, these "checks" functions perform smaller tasks, like
 checking individual cells."""
 
 # --- Standard Library Imports ------------------------------------------------
-import collections
-
+# None
 
 # --- Third Party Imports -----------------------------------------------------
 # None
 
 # --- Intra-Package Imports ---------------------------------------------------
+# None
 
 
 def cell_empty(value) -> bool:

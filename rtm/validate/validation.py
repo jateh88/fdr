@@ -19,11 +19,11 @@ from rtm.containers.work_items import MissingWorkItem
 
 
 # --- General-purpose validation ----------------------------------------------
-def field_exist(field_found, field_name=None) -> ValidationResult:
+def field_exist(was_found, field_name) -> ValidationResult:
     """Given field_found=True/False, return a ValidationResult, ready to be
     printed to console."""
 
-    if field_found:
+    if was_found:
         score = "Pass"
         explanation = None
     else:
@@ -40,7 +40,6 @@ def field_exist(field_found, field_name=None) -> ValidationResult:
 
 def left_right_order(field_self) -> ValidationResult:
     """Does this field actually appear after the one it's supposed to?"""
-    title = "Left/Right Order"
 
     # --- Field that is supposed to be positioned to this field's left
     field_left = rtm.containers.fields.get_expected_field_left(field_self)
@@ -59,7 +58,12 @@ def left_right_order(field_self) -> ValidationResult:
     else:
         score = "Error"
         explanation = f"This field should come after {field_left.name}"
-    return ValidationResult(score, title, explanation, markup_type='header')
+    return ValidationResult(
+        score=score,
+        title="Left/Right Order",
+        cli_explanation=explanation,
+        markup_type='header',
+    )
 
 
 def not_empty(values) -> ValidationResult:
@@ -80,7 +84,7 @@ def not_empty(values) -> ValidationResult:
         cli_explanation=explanation,
         nonconforming_indices=error_indices,
         markup_type='body',
-        markup_explanation='This cell must contain a value.'
+        markup_explanation='This cell must contain a value.',
     )
 
 
@@ -110,7 +114,10 @@ def procedure_step_format(id_values, work_items):
     else:
         score = "Error"
         explanation = "The following Procedure Step IDs do not follow the 'PXYZ' format: "
-    return ValidationResult(score, title, explanation, error_indices, markup_type='body')
+    return ValidationResult(
+        score, title, explanation, error_indices,
+        markup_type='body',
+    )
 
 
 def unique(values):
@@ -138,7 +145,10 @@ def unique(values):
         score = "Error"
         explanation = "The following rows contain duplicate IDs: "
 
-    return ValidationResult(score, title, explanation, error_indices, markup_type='body')
+    return ValidationResult(
+        score, title, explanation, error_indices,
+        markup_type='body',
+    )
 
 
 def start_w_root_id():

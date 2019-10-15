@@ -10,7 +10,7 @@ from itertools import groupby, count
 import click
 
 # --- Intra-Package Imports ---------------------------------------------------
-import rtm.main.config as config
+# None
 
 
 class ValidatorOutput(metaclass=abc.ABCMeta):
@@ -84,9 +84,8 @@ class ValidationResult(ValidatorOutput):
     def _get_color(self):
         return self._scores_and_colors[self.score]
 
-    @property
-    def rows(self):
-        first_body_row = 1 + config.header_row  # this is the row # directly after the headers
+    def rows(self, header_row):
+        first_body_row = 1 + header_row  # this is the row # directly after the headers
         return [index + first_body_row for index in self.indices]
 
     def print(self) -> None:
