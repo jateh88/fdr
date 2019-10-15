@@ -204,5 +204,5 @@ v 0.1.23
 
 v 0.1.25
 ''''''''''''
-* text wrap
 * version check
+* save excel sheets to subdirectory

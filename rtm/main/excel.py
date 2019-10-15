@@ -69,13 +69,19 @@ def now_str(pretty=False):
 
 
 def get_save_path(original_path, modify_original_file=False):
-    # TODO docstrings
+    """Get the full file path. Create subdirectory if necessary."""
+
+    # --- When modifying original file ----------------------------------------
     if modify_original_file:
         return original_path
+
+    # --- When saving a copy of the original file -----------------------------
     original_path = Path(original_path)
-    directory = original_path.parent
-    name = f'{now_str()}_{original_path.name}'
-    return directory / name
+    original_directory = original_path.parent
+    subdirectory = original_directory/'rtm_validator_results'
+    subdirectory.mkdir(exist_ok=True)
+    file_name = f'{now_str()}_{original_path.name}'
+    return subdirectory / file_name
 
 
 def get_cell_comment_string(comments):
