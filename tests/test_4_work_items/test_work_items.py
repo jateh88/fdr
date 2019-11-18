@@ -34,7 +34,7 @@ def test_work_items(fix_worksheet_columns):
     with context.fields.set(fields), context.work_items.set(work_items):
         actual_parent_indices = [item.parent.index for item in work_items]
 
-    assert expected_parent_indices == actual_parent_indices
+    assert actual_parent_indices == expected_parent_indices
 
 
 def test_work_item_index_count(fix_fields):
