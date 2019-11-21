@@ -7,6 +7,7 @@ related to validation errors (e.g. missing columns)"""
 
 # --- Third Party Imports -----------------------------------------------------
 import click
+from fuzzytable import FuzzyTable, exceptions as fuzz_e
 
 # --- Intra-Package Imports ---------------------------------------------------
 import rtm.main.excel as excel
@@ -34,11 +35,17 @@ def main(highlight_bool=False, highlight_original=False, path=None):
         highlight_original = click.confirm('Are you sure you want to edit the original excel file? Images, etc will be lost.')
 
     try:
-        if not path:
-            path = excel.get_rtm_path()
-        wb = excel.get_workbook(path)
-        ws = excel.get_worksheet(wb, "Procedure Based Requirements")
-        worksheet_columns = wc.WorksheetColumns(ws)
+        excel_path = path if path else excel.get_rtm_path()
+        ft = FuzzyTable(
+            path=excel_path,
+            sheetname="Procedure-Based Requirements",
+            # TODO need to create fields list:
+            fields=fields,
+            header_row_seek=True,
+            header_row=20,
+            name='rtm'
+        )
+        # TODO add fuzzytable to requires
         with context.worksheet_columns.set(worksheet_columns):
             fields = Fields()
         with context.fields.set(fields):
@@ -47,8 +54,11 @@ def main(highlight_bool=False, highlight_original=False, path=None):
             fields.validate()
             fields.print()
         if highlight_bool:
-            excel.mark_up_excel(path, wb, ws, fields.excel_markup, highlight_original)
+            excel.mark_up_excel(excel_path, wb, ws, fields.excel_markup, highlight_original)
     except RTMValidatorError as e:
+        click.echo(e)
+    except fuzz_e.SheetnameError as e:
+        # TODO make this specific to rtm
         click.echo(e)
 
     click.echo(
