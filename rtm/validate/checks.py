@@ -16,6 +16,8 @@ def cell_empty(value) -> bool:
     """Checks if a cell is empty. Cells contain True or False return False"""
     if isinstance(value, bool):
         return False
+    if value == 'None':
+        return True
     if not value:
         return True
     return False
