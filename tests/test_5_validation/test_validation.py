@@ -31,7 +31,7 @@ def test_column_exist(capsys):
 @pytest.mark.parametrize("reverse", [False, True])
 def test_column_sort(fix_fields, reverse):
 
-    fields = fix_fields("Procedure Based Requirements")
+    fields = fix_fields("Requirements Cascade")
     scores_should = ["Pass"] * len(fields)
 
     if reverse:

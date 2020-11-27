@@ -37,7 +37,7 @@ def main(highlight_bool=False, highlight_original=False, path=None):
         if not path:
             path = excel.get_rtm_path()
         wb = excel.get_workbook(path)
-        ws = excel.get_worksheet(wb, "Procedure Based Requirements")
+        ws = excel.get_worksheet(wb, "Requirements Cascade")
         worksheet_columns = wc.WorksheetColumns(ws)
         with context.worksheet_columns.set(worksheet_columns):
             fields = Fields()

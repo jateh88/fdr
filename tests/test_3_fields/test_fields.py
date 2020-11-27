@@ -12,7 +12,7 @@ import rtm.containers.fields as cfields
 def test_init_fields_list(fix_worksheet_columns):
     """Test internals of Fields class constructor"""
     field_classes = cfields.Fields.field_classes
-    with context.worksheet_columns.set(fix_worksheet_columns("Procedure Based Requirements")):
+    with context.worksheet_columns.set(fix_worksheet_columns("Requirements Cascade")):
         fields = [field_class() for field_class in field_classes]
         # debug
 
@@ -27,14 +27,14 @@ def test_init_fields_list(fix_worksheet_columns):
 
 def test_init_fields_class(fix_worksheet_columns):
     """Test constructor of Fields class"""
-    with context.worksheet_columns.set(fix_worksheet_columns("Procedure Based Requirements")):
+    with context.worksheet_columns.set(fix_worksheet_columns("Requirements Cascade")):
         fields = cfields.Fields()
         fields_found = [field for field in fields if field.found]
         assert len(fields_found) == len(fields)
 
 
 def test_fields_reverse(fix_worksheet_columns):
-    with context.worksheet_columns.set(fix_worksheet_columns("Procedure Based Requirements")):
+    with context.worksheet_columns.set(fix_worksheet_columns("Requirements Cascade")):
         fields = cfields.Fields()
         fields_reverse = list(reversed(fields))
         assert fields[0] == fields_reverse[-1]
@@ -50,7 +50,7 @@ def test_fields_not_found(fix_fields):
 
 
 def test_cascade_block(fix_worksheet_columns):
-    with context.worksheet_columns.set(fix_worksheet_columns("Procedure Based Requirements2")):
+    with context.worksheet_columns.set(fix_worksheet_columns("Requirements Cascade2")):
         cascade_block = cfields.CascadeBlock()
     assert len(cascade_block) == 6
     assert cascade_block.values == [(1,2,3)]*6

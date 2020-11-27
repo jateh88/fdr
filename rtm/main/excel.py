@@ -94,7 +94,7 @@ def get_cell_comment_string(comments):
 
 def mark_up_excel(path, wb, ws_procedure, markup_content: dict, modify_original_file=False):
     # Comments fall in two categories:
-    #   PROCEDURE BASED REQUIREMENTS: These are comments bound to record in a specific field.
+    #   REQUIREMENTS CASCADE: These are comments bound to record in a specific field.
     #       The cell gets highlighted orange and a comment explains the error.
     #   README: These are not directed at a specific cell.
     #       These will generate new rows inserted at the top of the worksheet.

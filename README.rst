@@ -42,7 +42,7 @@ Validation Rules
 -----------------
 General Notes
 '''''''''''''
-- The FDR sheet must have the title 'Procedure Based Requirements'
+- The FDR sheet must have the title 'Requirements Cascade'
 - If multiples headers share the same name, only the first will be used.
 - All columns get checked for 1) Exist and 2) Correct left-to-right order.
 
