@@ -11,7 +11,7 @@ module = "rtm"  # source code directory
 dist-name = "dps-rtm"  # Module name as shown on PyPI. If this ever changes, be sure to update get_versions() func.
 author = "Jonathan Chukinas"  # Visible on PyPI
 author-email = "chukinas@gmail.com"  # Visible on PyPI
-home-page = "https://github.com/jonathanchukinas/fdr"
+home-page = "https://github.com/jateh88/fdr"
 classifiers = ["License :: OSI Approved :: MIT License"]
 description-file = "README.rst"
 requires-python = ">=3.6"
